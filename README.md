@@ -1,2 +1,41 @@
+<!--
+ * @Author: LetMeFly
+ * @Date: 2025-02-06 08:59:49
+ * @LastEditors: LetMeFly.xyz
+ * @LastEditTime: 2025-02-07 12:19:08
+-->
 # SeekJudgeHybrid
-让DeepSeek分别不依据和依据决策树判决一个案例并对比判决结果生成表格
+
+让DeepSeek(以下可能简称DS)分别不依据和依据决策树判决一个案例并对比判决结果生成表格
+
+## 流程
+
+### 总述
+
+1. 给DeepSeek一个彩礼纠纷相关的案例让DeepSeek判决应该返还多少彩礼
+1. 给DeepSeek一个写好的法律判决决策树（By [shykeke](https://web.letmefly.xyz/He0/shykeke/)）让它重判
+1. (Optional)告诉DS哪里判断错误了，需要xx修改
+1. 让DeepSeek生成一个使用决策树前后判断结果的对比表格
+
+### 细节
+
+1. Python[读案例](#读案例)（docx to text）
+2. [调用API](#调api)接口和DS初次对话
+3. 调用API接口和DS再次对话
+4. 询问是否有需要[修改]()的地方，如果有就不断调用API和DS对话让它修改
+5. 调用API和DS对话让它总结使用决策树前后判决结果关系
+
+## 需实现功能
+
+### 读案例
+
+- [ ] python读docx为text。
+
+### 调API
+
+- [ ] 调用API和DS对话（可能需要带上历史记录）
+
+### 界面
+
+#### 修改询问
+
