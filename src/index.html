@@ -2,7 +2,7 @@
  * @Author: LetMeFly
  * @Date: 2025-02-07 22:01:23
  * @LastEditors: LetMeFly.xyz
- * @LastEditTime: 2025-02-07 22:30:05
+ * @LastEditTime: 2025-02-07 22:46:31
 -->
 <!DOCTYPE html>
 <html>
@@ -33,17 +33,13 @@
         function startChat() {
             const input = document.getElementById('input').value;
             const output = document.getElementById('output');
-            output.innerHTML = '';  // 清空之前的内容
+            output.innerHTML = '正在思考...';
 
             // 关闭之前的连接（如果有）
             if (eventSource) eventSource.close();
 
             // 建立 SSE 连接
             eventSource = new EventSource(`/chat?query=${encodeURIComponent(input)}`);
-            eventSource.onopen = () => {
-                output.innerHTML = '正在思考...';
-            };
-            let first = true;
 
             // 监听数据
             eventSource.onmessage = (event) => {
@@ -51,10 +47,6 @@
                     console.log(event.data);
                     const data = JSON.parse(event.data);
                     // 假设大模型返回字段为 content
-                    if (first) {
-                        output.innerHTML = '';
-                        first = false;
-                    }
                     output.innerHTML += data.choices[0].delta.content || '';
                 } catch (e) {
                     console.error('解析错误:', e);

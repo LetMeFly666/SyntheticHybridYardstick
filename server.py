@@ -2,12 +2,15 @@
 Author: LetMeFly
 Date: 2025-02-06 21:57:39
 LastEditors: LetMeFly.xyz
-LastEditTime: 2025-02-07 22:31:25
+LastEditTime: 2025-02-07 22:45:47
 '''
 # server.py
 from flask import Flask, request, Response, render_template_string
 import requests
 import json
+import webbrowser
+import threading
+import time
 
 app = Flask(__name__)
 
@@ -56,5 +59,15 @@ def chat_stream():
     
     return Response(generate(), mimetype='text/event-stream')
 
+def run_flask():
+    app.run(host='shy.local.letmefly.xyz', port=4140, debug=False)
+
+def open_browser():
+    time.sleep(1.5)
+    webbrowser.open('http://shy.local.letmefly.xyz:4140')
+
 if __name__ == '__main__':
-    app.run(host='shy.local.letmefly.xyz', port=4140, debug=True)
+    browser_thread = threading.Thread(target=open_browser)
+    browser_thread.start()
+    run_flask()
+    browser_thread.join()
