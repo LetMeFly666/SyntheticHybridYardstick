@@ -1,0 +1,36 @@
+{
+    "id": "0194dfa9cbe96128dbcd5910752e461b",
+    "object": "chat.completion.chunk",
+    "created": 1738919234,
+    "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+    "choices": [
+        {
+            "index": 0,
+            "delta": {
+                "content": "2",
+                "reasoning_content": null
+            },
+            "finish_reason": null,
+            "content_filter_results": {
+                "hate": {
+                    "filtered": false
+                },
+                "self_harm": {
+                    "filtered": false
+                },
+                "sexual": {
+                    "filtered": false
+                },
+                "violence": {
+                    "filtered": false
+                }
+            }
+        }
+    ],
+    "system_fingerprint": "",
+    "usage": {
+        "prompt_tokens": 61,
+        "completion_tokens": 62,
+        "total_tokens": 123
+    }
+}
