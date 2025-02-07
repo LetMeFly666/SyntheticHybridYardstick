@@ -1,0 +1,2 @@
+# SeekJudgeHybrid
+让DeepSeek分别不依据和依据决策树判决一个案例并对比判决结果生成表格
