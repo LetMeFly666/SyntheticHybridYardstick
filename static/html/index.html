@@ -2,7 +2,7 @@
  * @Author: LetMeFly
  * @Date: 2025-02-08 13:39:40
  * @LastEditors: LetMeFly.xyz
- * @LastEditTime: 2025-02-08 16:15:19
+ * @LastEditTime: 2025-02-08 16:58:57
 -->
 <!DOCTYPE html>
 <html lang="zh-CN">
@@ -23,7 +23,22 @@
 <body>
     <h1>文件上传与对话进度</h1>
 
+    <!-- 流程说明 -->
+    <h2>流程说明</h2>
+    <pre><code class="mermaid">
+        graph LR
+            classDef process fill:#E5F6FF,stroke:#73A6FF,stroke-width:2px;
+        
+            A(上传案例文件):::process --> B(DS初步分析):::process
+            B --> C(给DS决策树并让它再次分析):::process
+            C --> D{纠正DS错误}:::process
+            D --> |是| E(纠正错误):::process
+            D --> |否| F(生成使用决策树前后的结果对比表):::process
+            E --> D
+    </code></pre>
+
     <!-- 文件上传表单 -->
+    <h2>上传案例文件</h2>
     <form id="uploadForm" enctype="multipart/form-data">
         <input type="file" name="files" id="files" multiple accept=".docx,.doc">
         <button type="submit">上传文件</button>
@@ -59,6 +74,7 @@
                 const result = await response.json();
                 if (result.success) {
                     alert('文件上传成功！');
+                    files.value = '';
                     // location.reload(); // 刷新页面以显示新文件
                 } else {
                     alert('文件上传失败：' + result.message);
@@ -115,6 +131,33 @@
                 new EventSource('/progress');
             }, 5000);
         };
+    </script>
+
+    <script name="renderMermaid">
+        function renderMermaid() {
+            // 创建 script 元素
+            const script = document.createElement('script');
+            // 设置脚本的 src 属性
+            script.src = 'https://letmefly.xyz/Links/mermaid.min.js';
+            // 监听脚本的 load 事件
+            script.onload = function () {
+                // 脚本加载完成后，初始化 Mermaid 并渲染图表
+                mermaid.initialize({ startOnLoad: false });
+                mermaid.run({
+                    querySelector: '.mermaid'
+                });
+            };
+            // 监听脚本的 error 事件，处理加载失败的情况
+            script.onerror = function () {
+                console.error('Mermaid 脚本加载失败');
+            };
+            // 将脚本添加到文档的 head 中
+            document.head.appendChild(script);
+        }
+
+        setTimeout(() => {
+            renderMermaid();
+        }, 10);
     </script>
 </body>
 </html>

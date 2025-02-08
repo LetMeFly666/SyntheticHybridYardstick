@@ -2,7 +2,7 @@
  * @Author: LetMeFly
  * @Date: 2025-02-06 16:22:30
  * @LastEditors: LetMeFly.xyz
- * @LastEditTime: 2025-02-08 16:14:38
+ * @LastEditTime: 2025-02-08 16:55:21
  */
 我想写一个flask应用，可以让用户上传一些docx或者doc文件，然后flask在后台为这些文件每个建立一个文件夹，并调用DeepSeek的API进行多轮对话，并保存对话进度。
 主页可以上传文件、查看每个文件的对话进度（不需要显示具体对话内容，只需要显示“第一轮对话进行中”“第二轮对话已完成”等彩色tag）；点击一个文件可以进入这个文件的对话详情。
@@ -23,30 +23,61 @@
 
 --
 
-python获取当前时间戳
+
+<form id="uploadForm" enctype="multipart/form-data">
+	<input type="file" name="files" id="files" multiple accept=".docx,.doc">
+	<button type="submit">上传文件</button>
+</form>
+
+文件上传成功后，清除form中的文件内容
 
 ---
 
-html设置最大显示字符数量，多余的用...代替
+上传案例文件->DS初步分析->给DS决策树并让它再次分析->纠正DS错误（可选）->生成使用决策树前后的结果对比表
+
+将其画成mermaid流程图
 
 ---
 
-html字典取所有键值
+给出mermaid源码，以及如何将其渲染到HTML上
 
 ---
 
-<ul id="fileList">
-        <!-- 动态生成文件列表 -->
-        <!-- <li class="file-item" id="file-{md5}">
-            <a href="" class="fileName">[无结果版]苏某某、马某甲等婚约财产纠纷民事一审民...(FBM-CLI.C.558409211).doc</a>
-        </li> -->
-    <li id="file-c84890ac9e7509d72b12205fef70af68" class="file-item">
-		<a href="/detail/c84890ac9e7509d72b12205fef70af68" class="fileName">[无结果版]苏某某、马某甲等婚约财产纠纷民事一审民...(FBM-CLI.C.558409211).doc</a>
-		<span>状态: 上传案例文件</span>
-	</li><li id="file-d990839b5f6eb9ee8b8ad33b517c0538" class="file-item">
-		<a href="/detail/d990839b5f6eb9ee8b8ad33b517c0538" class="fileName">Let造案例.doc</a>
-		<span>状态: 上传案例文件</span>
-	</li></ul>
 
-html设置最大显示字符数量，多余的用...代替
-设置内容为#fileList .file-item a.fileName  对吗
+<script src="https://letmefly.xyz/Links/mermaid.min.js.js" async></script>
+
+如何设置在这个js加载完成后开始渲染
+
+---
+
+这段代码有什么错
+
+<pre><code class="mermaid">
+graph LR
+	classDef process fill:#E5F6FF,stroke:#73A6FF,stroke-width:2px;
+	
+	A(上传案例文件):::process --> B(DS初步分析):::process
+	B --> C(给DS决策树并让它再次分析):::process
+	C --> D{纠正DS错误（可选）}:::process
+	D --> |是| E(纠正错误):::process
+	E --> F(生成使用决策树前后的结果对比表):::process
+	D --> |否| F
+</code></pre>
+
+---
+
+mermaid中如何加入中文括号（版本10.2.3)
+
+---
+
+不，就是因为括号所以报错了
+
+{str: 'Lexical error on line 6. Unrecognized text.\n...s  …纠正DS错误（可选）}:::process    \n----------------------^', message: 'Lexical error on line 6. Unrecognized text.\n...s  …纠正DS错误（可选）}:::process    \n----------------------^', hash: 'Error', error: Error: Lexical error on line 6. Unrecognized text.
+...s    C --> D{纠正DS错误（可选）}:::process    
+------…}
+
+如果把（可选）的括号去掉就可以正常渲染了
+
+---
+
+mermaid如何由上到下

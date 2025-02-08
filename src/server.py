@@ -2,7 +2,7 @@
 Author: LetMeFly
 Date: 2025-02-06 21:57:39
 LastEditors: LetMeFly.xyz
-LastEditTime: 2025-02-08 16:16:57
+LastEditTime: 2025-02-08 16:18:36
 '''
 # server.py
 from flask import Flask, request, Response, jsonify, render_template_string, send_from_directory
@@ -121,7 +121,6 @@ def event_stream():
             update_queue.get(timeout=60)  # 最多等待60秒
         except:
             pass  # 否则也要发送一次
-        # 构造符合 SSE 格式的数据
 
 
 # 进度展示
