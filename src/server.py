@@ -2,23 +2,37 @@
 Author: LetMeFly
 Date: 2025-02-06 21:57:39
 LastEditors: LetMeFly.xyz
-LastEditTime: 2025-02-08 12:04:04
+LastEditTime: 2025-02-08 13:06:48
 '''
 # server.py
-from flask import Flask, request, Response, render_template_string
+from flask import Flask, request, Response, render_template_string, send_from_directory
 import requests
 import json
 import webbrowser
 import threading
 import time
 from src import chat
+import os
 
 app = Flask(__name__)
 
-# 首页路由，直接返回 HTML 页面
-@app.route('/')
+
+# 单次对话
+@app.route('/singleChat')
 def index():
-    return render_template_string(open('src/index.html', 'r', encoding='utf-8').read())
+    return render_template_string(open('static/singleChat.html', 'r', encoding='utf-8').read())
+
+
+# js
+@app.route('/static/js/<path:filename>')
+def js(filename):
+    print(filename)
+    # filePath = os.path.join(app.root_path, '..', 'static', 'js')
+    # filePath = f'{app.root_path}/static/js'
+    filePath = f'{os.getcwd()}/static/js'
+    print(filePath)
+    return send_from_directory(filePath, filename)
+
 
 # 流式响应路由
 @app.route('/chat')

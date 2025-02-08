@@ -2,7 +2,7 @@
  * @Author: LetMeFly
  * @Date: 2025-02-07 22:01:23
  * @LastEditors: LetMeFly.xyz
- * @LastEditTime: 2025-02-08 11:58:02
+ * @LastEditTime: 2025-02-08 13:24:29
 -->
 <!DOCTYPE html>
 <html>
@@ -10,6 +10,7 @@
 <head>
     <title>实时对话演示</title>
     <script src="https://letmefly.xyz/Links/Common.js" async></script>
+    <script src="/static/js/marked.min.js"></script>
 </head>
 
 <body>
@@ -18,12 +19,49 @@
         <button onclick="startChat()">发送</button>
         <button onclick="stopChat()">停止</button>
     </div>
-    <div id="output" style="white-space: pre-wrap; margin-top: 20px;"></div>
-    
+    <div id="output" style="white-space: pre-wrap; margin-top: 20px; display: none"></div>
+    <div id="markdown"></div>
+
     <script>
         function stopChat() {
             if (eventSource) eventSource.close();
         }
+    </script>
+
+    <script>
+        const output = document.getElementById('output');
+        const markdown = document.getElementById('markdown');
+
+        function renderMarkdown() {
+            const inputText = output.innerHTML;
+            const renderedHtml = marked.parse(inputText);
+            markdown.innerHTML = renderedHtml;
+        }
+
+        const targetNode = document.getElementById('output');
+
+        // 配置观察选项
+        const config = {
+            childList: true, // 观察子节点的变化
+            subtree: true,   // 观察所有后代节点
+            characterData: true // 观察文本内容的变化
+        };
+
+        // 创建一个回调函数，当观察到变化时执行
+        const onOutputModified = function (mutationsList, observer) {
+            for (let mutation of mutationsList) {
+                if (mutation.type === 'childList' || mutation.type === 'characterData') {
+                    // 调用 renderMarkdown 函数
+                    renderMarkdown();
+                }
+            }
+        };
+
+        // 创建一个 MutationObserver 实例并传入回调函数
+        const observer = new MutationObserver(onOutputModified);
+
+        // 开始观察目标节点
+        observer.observe(targetNode, config);
     </script>
 
     <script>
@@ -32,7 +70,7 @@
         function startChat() {
             const input = document.getElementById('input').value;
             const output = document.getElementById('output');
-            output.innerHTML = '正在思考...';
+            output.innerHTML = '发起请求...';
 
             // 关闭之前的连接（如果有）
             if (eventSource) eventSource.close();
@@ -40,11 +78,13 @@
             // 建立 SSE 连接
             eventSource = new EventSource(`/chat?query=${encodeURIComponent(input)}`);
 
+            eventSource.onopen = () => {
+                output.innerHTML = '正在思考...';
+            };
             let first = true;
             // 监听数据
             eventSource.onmessage = (event) => {
                 try {
-                    console.log(event.data);
                     const data = JSON.parse(event.data);
                     if (first) {
                         output.innerHTML = '';
