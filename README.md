@@ -2,7 +2,7 @@
  * @Author: LetMeFly
  * @Date: 2025-02-06 08:59:49
  * @LastEditors: LetMeFly.xyz
- * @LastEditTime: 2025-02-08 16:20:14
+ * @LastEditTime: 2025-02-08 22:32:22
 -->
 # SeekJudgeHybrid
 
@@ -44,6 +44,8 @@
 
 + `/chat`页面支持流式对话，实时显示大模型响应
 + 案件列表由EventStream更新，仅当`case`文件夹下某`config.json`更新时`增量`发送
++ 案例自动去重，重复上传只会覆盖上次文件名
++ 对话进度支持中断重连继续进行
 
 ## 不足
 

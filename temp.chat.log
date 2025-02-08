@@ -1,0 +1,22 @@
+Press CTRL+C to quit
+127.0.0.1 - - [08/Feb/2025 22:15:13] "POST /start_chat HTTP/1.1" 200 -
+127.0.0.1 - - [08/Feb/2025 22:15:27] "GET /chatData/8755c624-70bf-4cd2-887d-23f639411619 HTTP/1.1" 200 -
+127.0.0.1 - - [08/Feb/2025 22:15:35] "GET /chatStatus/8755c624-70bf-4cd2-887d-23f639411619 HTTP/1.1" 200 -
+127.0.0.1 - - [08/Feb/2025 22:15:39] "GET /chatData/e225bd63-4b06-40da-a263-6fb30f7f28d8 HTTP/1.1" 200 -
+127.0.0.1 - - [08/Feb/2025 22:15:44] "GET /chatData/8755c624-70bf-4cd2-887d-23f639411619 HTTP/1.1" 200 -
+Chat 8755c624-70bf-4cd2-887d-23f639411619 saved to history
+127.0.0.1 - - [08/Feb/2025 22:16:05] "GET /chatStatus/8755c624-70bf-4cd2-887d-23f639411619 HTTP/1.1" 200 -
+127.0.0.1 - - [08/Feb/2025 22:16:30] "POST /start_chat HTTP/1.1" 200 -
+127.0.0.1 - - [08/Feb/2025 22:16:45] "GET /chatData/37ba325a-3f20-4894-bb1e-baa2d87a7f7e HTTP/1.1" 200 -
+127.0.0.1 - - [08/Feb/2025 22:16:50] "POST /start_chat HTTP/1.1" 200 -
+127.0.0.1 - - [08/Feb/2025 22:16:58] "GET /chatData/1d748b24-0876-4913-ba80-1e9ca0200154 HTTP/1.1" 200 -
+127.0.0.1 - - [08/Feb/2025 22:17:02] "GET /chatData/37ba325a-3f20-4894-bb1e-baa2d87a7f7e HTTP/1.1" 200 -
+127.0.0.1 - - [08/Feb/2025 22:17:04] "GET /chatData/1d748b24-0876-4913-ba80-1e9ca0200154 HTTP/1.1" 200 -
+127.0.0.1 - - [08/Feb/2025 22:17:07] "GET /chatData/1d748b24-0876-4913-ba80-1e9ca0200154 HTTP/1.1" 200 -
+127.0.0.1 - - [08/Feb/2025 22:17:16] "GET /chatData/37ba325a-3f20-4894-bb1e-baa2d87a7f7e HTTP/1.1" 200 -
+Chat 37ba325a-3f20-4894-bb1e-baa2d87a7f7e saved to history
+127.0.0.1 - - [08/Feb/2025 22:17:32] "GET /chatData/1d748b24-0876-4913-ba80-1e9ca0200154 HTTP/1.1" 200 -
+127.0.0.1 - - [08/Feb/2025 22:17:39] "GET /chatStatus/1d748b24-0876-4913-ba80-1e9ca0200154 HTTP/1.1" 200 -
+Chat 1d748b24-0876-4913-ba80-1e9ca0200154 saved to history
+127.0.0.1 - - [08/Feb/2025 22:17:42] "GET /chatData/1d748b24-0876-4913-ba80-1e9ca0200154 HTTP/1.1" 200 -
+127.0.0.1 - - [08/Feb/2025 22:17:43] "GET /chatStatus/1d748b24-0876-4913-ba80-1e9ca0200154 HTTP/1.1" 200 -

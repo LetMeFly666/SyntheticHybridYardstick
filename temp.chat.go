@@ -2,7 +2,7 @@
  * @Author: LetMeFly
  * @Date: 2025-02-06 16:22:30
  * @LastEditors: LetMeFly.xyz
- * @LastEditTime: 2025-02-08 17:34:09
+ * @LastEditTime: 2025-02-08 22:23:05
  */
 我想写一个flask应用，可以让用户上传一些docx或者doc文件，然后flask在后台为这些文件每个建立一个文件夹，并调用DeepSeek的API进行多轮对话，并保存对话进度。
 主页可以上传文件、查看每个文件的对话进度（不需要显示具体对话内容，只需要显示“第一轮对话进行中”“第二轮对话已完成”等彩色tag）；点击一个文件可以进入这个文件的对话详情。
@@ -33,36 +33,15 @@ graph LR
 
 ---
 
-补全flask函数：
+flask后端可能同时进行着多个和DeepSeek的流式对话，请实现如下功能：
 
-@app.route('/detail/<string:fileHash>')
-def detail(fileHash):
-    pass
++ 为前端提供接口/chatData/{chatId}，实时返回对话内容
++ 当和DeepSeek的对话完成时，存储对话内容
 
-
----
-
-flask的render_template函数无法读取文件jinja2.exceptions.TemplateNotFound: static/html/onCase.html
+前端可以随时访问任意接口，获取对话内容或对话状态。
 
 ---
 
-我的app.py在src文件夹下
-由main.py调用app.py的app.run()
+很棒，但是前端刷新的话，之前向前端传递过的对话内容会丢失。
 
----
-
-文件结构如下：
-
-main.py
-src/
-├──app.py
-├──static/
-│   ├──html/
-│   │   └──onCase.html
-
----
-
-可否如下方式
-
-app = Flask(__name__)
-app.config
+因此，请修改为，每次向前端流式传输的内容包含历史的所有内容。

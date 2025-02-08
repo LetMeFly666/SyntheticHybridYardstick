@@ -2,7 +2,7 @@
  * @Author: LetMeFly
  * @Date: 2025-02-08 17:09:53
  * @LastEditors: LetMeFly.xyz
- * @LastEditTime: 2025-02-08 17:15:22
+ * @LastEditTime: 2025-02-08 22:00:22
 -->
 <!DOCTYPE html>
 <html lang="zh-CN">
@@ -12,109 +12,108 @@
     <title>案例 - {{ fileName }}</title>
     <script src="https://letmefly.xyz/Links/Common.js" async></script>
     <style>
-        /* 状态标签样式 */
-        .status-tags .badge {
-            margin-left: 0.5rem;
-            animation: pulse 1.5s infinite;
-        }
-
-        @keyframes pulse {
-            0% {
-                transform: scale(1);
-            }
-
-            50% {
-                transform: scale(1.05);
-            }
-
-            100% {
-                transform: scale(1);
-            }
-        }
-
-        .process-flow {
-            display: flex;
-            justify-content: space-between;
-            position: relative;
-        }
-
-        .step {
-            flex: 1;
-            text-align: center;
-            position: relative;
-        }
-
-        .step-circle {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: #e9ecef;
-            margin: 0 auto 10px;
-            line-height: 40px;
-        }
-
-        .step.active .step-circle {
-            background: #0d6efd;
-            color: white;
-        }
-
-        .step.done .step-circle {
-            background: #198754;
-            color: white;
+        .forbidden {
+            display: none;
         }
     </style>
 </head>
 
 <body>
-    <div class="container py-4">
-        <!-- 头部区域 -->
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h3>案例名称：{{ fileName }}</h3>
-            <div class="status-tags">
-                <span class="badge bg-primary">分析阶段：{{ current_stage }}</span>
-                <span class="badge bg-success">当前轮次：第{{ current_round }}轮</span>
-            </div>
-        </div>
-
-        <!-- 流程可视化区域 -->
-        <div class="process-flow mb-4">
-            <div class="step done">
-                <div class="step-circle">1</div>
-                <div class="step-label">文件上传</div>
-            </div>
-            <div class="step active">
-                <div class="step-circle">2</div>
-                <div class="step-label">初步分析</div>
-            </div>
-            <!-- 其他步骤... -->
-        </div>
-
-        <!-- 操作面板 -->
-        <div class="action-panel mb-4">
-            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                <button class="btn btn-primary" id="next-step">继续下一步</button>
-                <button class="btn btn-outline-secondary" id="refresh-status">刷新状态</button>
-            </div>
-        </div>
-
-        <!-- 对话交互区域 -->
-        <div class="chat-container card">
-            <div class="card-header">对话工作区</div>
-            <div class="card-body chat-messages" id="chat-messages">
-                <!-- 消息示例 -->
-                <div class="message ai-message">
-                    <div class="message-header">DeepSeek分析结果</div>
-                    <div class="message-content">正在分析文档结构...</div>
-                </div>
-            </div>
-            <div class="card-footer">
-                <div class="input-group">
-                    <textarea class="form-control" placeholder="输入补充指令..." id="user-input"></textarea>
-                    <button class="btn btn-success" id="send-message">发送</button>
-                </div>
-            </div>
+    <div name="header">
+        <button id="backToMainPage">回到主页</button>
+        <h3>案例名称：{{ fileName }}</h3>
+        <div class="status-tags">
+            <span class="badge">分析阶段：{{ progress_now }}</span>
         </div>
     </div>
+
+    <div id="progress">
+        <div id="progress-1">
+            <h3>步骤1：上传案例文件</h3>
+            <div name="option"></div>
+            <div name="state"></div>
+        </div>
+        <div id="progress-2">
+            <h3>步骤2：DS初步分析</h3>
+            <div name="option">
+                
+                <button id="progress-2-start">开始分析</button>
+            </div>
+            <div name="state"></div>
+        </div>
+        <div id="progress-3">
+            <h3>步骤3：给DS决策树并让它再次分析</h3>
+            <div name="option"></div>
+            <div name="state"></div>
+        </div>
+        <div id="progress-4">
+            <h3>步骤4：纠正DS错误</h3>
+            <div name="option"></div>
+            <div name="state"></div>
+        </div>
+        <div id="progress-5">
+            <h3>步骤5：错误纠正对话</h3>
+            <div name="option"></div>
+            <div name="state"></div>
+        </div>
+        <div id="progress-6">
+            <h3>步骤6：生成使用决策树前后的结果对比表</h3>
+            <div name="option"></div>
+            <div name="state"></div>
+        </div>
+    </div>
+
+    <script>
+        const stepList = [
+            '上传案例文件',                 // 1
+            'DS初步分析',                   // 2
+            '给DS决策树并让它再次分析',      // 3
+            '纠正DS错误',                   // 4
+            '错误纠正对话',                 // 5 - optional
+            '生成使用决策树前后的结果对比表'  // 6
+        ];
+        const nowStep = '{{ progress_now }}';
+
+        function renderProgress() {
+            const progressDiv = document.getElementById('progress');
+            var finished = true;
+            for (var step = 1; step <= stepList.length; step++) {
+                const stepDiv = document.getElementById('progress-' + step);
+                const optionDiv = stepDiv.querySelector('[name=option]');
+                const statusDiv = stepDiv.querySelector('[name=state]');
+                if (finished) {
+                    statusDiv.innerHTML = '已完成';
+                    optionDiv.classList.add('forbidden');
+                    if (nowStep === stepList[step - 1]) {  // 刚好完成到这一步
+                        finished = false;
+                    }
+                } else {
+                    if (nowStep === stepList[step - 2]) {  // 应该或者正在完成这一步
+                        statusDiv.innerHTML = '进行到';
+                        optionDiv.classList.remove('forbidden');
+                    } else {
+                        statusDiv.innerHTML = '未开始';
+                        optionDiv.classList.add('forbidden');
+                    }
+                }
+            }
+        }
+
+        renderProgress();
+
+    </script>
+
+    <script>
+        document.querySelector('#backToMainPage').onclick = () => {
+            window.location.href = '/';
+        };
+
+        const progress_2_start = document.querySelector('#progress-2-start');
+        progress_2_start.onclick = async () => {
+            progress_2_start.disabled = true;
+            
+        };
+    </script>
 
     <script>
         // 使用EventSource接收流式数据
@@ -133,9 +132,9 @@
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${data.role}-message`;
             messageDiv.innerHTML = `
-        <div class="message-header">${data.sender}</div>
-        <div class="message-content">${data.content}</div>
-    `;
+                <div class="message-header">${data.sender}</div>
+                <div class="message-content">${data.content}</div>
+            `;
             chatMessages.appendChild(messageDiv);
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }

@@ -2,7 +2,7 @@
 Author: LetMeFly
 Date: 2025-02-06 21:57:39
 LastEditors: LetMeFly.xyz
-LastEditTime: 2025-02-08 17:36:12
+LastEditTime: 2025-02-08 22:02:53
 '''
 # server.py
 from flask import Flask, request, Response, jsonify, render_template_string, render_template, send_from_directory
@@ -21,7 +21,6 @@ import queue
 
 
 app = Flask(__name__)
-# app.config['template_folder'] = os.path.join(os.getcwd(), 'static/html')
 app.template_folder = os.path.join(os.getcwd(), 'static/html')
 CASE_FOLDER = 'case'
 caseProgress = readConfig.readAllConfig()
@@ -120,7 +119,7 @@ def event_stream():
         data = json.dumps(caseProgress)
         yield f"data: {data}\n\n"
         try:
-            update_queue.get(timeout=60)  # 最多等待60秒
+            update_queue.get(timeout=5)  # 最多等待5秒
         except:
             pass  # 否则也要发送一次
 
@@ -172,6 +171,7 @@ def detail(fileHash):
     return render_template(
         'oneCase.html',
         fileName=fileData['fileName'],
+        progress_now=fileData['progress']['now'],
     )
 
 def run_flask():
