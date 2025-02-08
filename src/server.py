@@ -2,7 +2,7 @@
 Author: LetMeFly
 Date: 2025-02-06 21:57:39
 LastEditors: LetMeFly.xyz
-LastEditTime: 2025-02-08 14:56:25
+LastEditTime: 2025-02-08 15:41:46
 '''
 # server.py
 from flask import Flask, request, Response, jsonify, render_template_string, send_from_directory
@@ -12,6 +12,7 @@ import webbrowser
 import threading
 import time
 from src import chat
+from src import readConfig
 import os
 import hashlib
 from watchdog.observers import Observer
@@ -21,7 +22,7 @@ import queue
 
 app = Flask(__name__)
 CASE_FOLDER = 'case'
-caseProgress = {}
+caseProgress = readConfig.readAllConfig()
 update_queue = queue.Queue()
 
 
@@ -84,35 +85,20 @@ def upload():
 
 
 class CaseFolderHandler(FileSystemEventHandler):
-    def on_any_event(self, event):
-        print('files changed')
-        if not event.is_directory:
-            file_path = event.src_path
-            if file_path.endswith('config.json'):
-                # 获取案例名称
-                case_name = os.path.basename(os.path.dirname(file_path))
-                try:
-                    with open(file_path, 'r', encoding='utf-8') as f:
-                        config = json.loads(f.read())
-                        # 假设 config.json 中有一个 "progress" 字段表示对话进度
-                        progress = config.get('progress', 0)
-                        caseProgress[case_name] = progress
-                        update_queue.put(1)
-                except Exception as e:
-                    print(f"Error reading {file_path}: {e}")
+    def update(self, event):
+        changed = readConfig.updateChangedDict(caseProgress, event)
+        if changed:
+            update_queue.put(1)
+            print(f'len(update_queue): {len(update_queue.queue)}')
+
+    def on_modified(self, event):
+        self.update(event)
+    def on_created(self, event):
+        self.update(event)
+    def on_deleted(self, event):
+        self.update(event)
 
 
-# 定义 hello 函数
-def hello():
-    print("Hello! 文件发生了变化。")
-
-# 定义事件处理类
-class MyEventHandler(FileSystemEventHandler):
-    def on_any_event(self, event):
-        # 当任何文件系统事件发生时调用 hello 函数
-        hello()
-
-path = 'case'
 # 创建事件处理对象
 event_handler = CaseFolderHandler()
 # 创建观察者对象
