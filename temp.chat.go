@@ -2,7 +2,7 @@
  * @Author: LetMeFly
  * @Date: 2025-02-06 16:22:30
  * @LastEditors: LetMeFly.xyz
- * @LastEditTime: 2025-02-08 13:53:35
+ * @LastEditTime: 2025-02-08 14:50:15
  */
 我想写一个flask应用，可以让用户上传一些docx或者doc文件，然后flask在后台为这些文件每个建立一个文件夹，并调用DeepSeek的API进行多轮对话，并保存对话进度。
 主页可以上传文件、查看每个文件的对话进度（不需要显示具体对话内容，只需要显示“第一轮对话进行中”“第二轮对话已完成”等彩色tag）；点击一个文件可以进入这个文件的对话详情。
@@ -21,47 +21,49 @@
 
 暂时不需要样式。
 
----
-
-请实现后端对应的所需功能
-
----
-
-这是我的前端页面，请你牢记，并等待下一步指令
-
-
 --
 
 
-请实现upload接口。
+请实现progress接口。progress接口的作用是：
 
-只需要返回flask对应相关函数即可
+监听case文件夹的文件变化，获取每个案例的对话进度（从文件夹下config.json获取），并返回给前端
 
----
-
-<form id="uploadForm" enctype="multipart/form-data">
-<input type="file" name="files" id="files" multiple accept=".docx,.doc">
-<button type="submit">上传文件</button>
-</form>
-
-这段代码点击上传后会刷新页面吗
-
-
+只需要返回flask对应相关代码即可
 
 
 ---
 
-给我一段python赞美太阳的代码
+注意前端const eventSource = new EventSource('/progress');
+后端不应一次返回吧
 
 ---
 
-这段代码在控制台会输出：
+很棒！能否做到当watchdog发现有文件更新时再返回
 
-对话结束
-EventSource 加载失败：GET“http://shy.local.letmefly.xyz:4140/chat?query=”。
-
-为什么会输出EventSource 加载失败
-
-
-{{file}}
 ---
+
+请详细介绍js的EventSource，
+
+---
+
+是否会有长时间数据不更新的自动断开机制
+
+---
+
+python watchdog实现一个功能：
+
+文件夹`case`下任何文件发生变化时，调用hello函数
+
+---
+
+flask结束时，停止watchdog
+
+---
+
+
+browser_thread = threading.Thread(target=open_browser)
+browser_thread.start()
+run_flask()
+browser_thread.join()
+
+这样会导致watchdog在一开始时就被销毁，如何解决
