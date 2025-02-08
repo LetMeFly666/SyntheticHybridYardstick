@@ -1,0 +1,145 @@
+<!--
+ * @Author: LetMeFly
+ * @Date: 2025-02-08 17:09:53
+ * @LastEditors: LetMeFly.xyz
+ * @LastEditTime: 2025-02-08 17:15:22
+-->
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <title>案例 - {{ fileName }}</title>
+    <script src="https://letmefly.xyz/Links/Common.js" async></script>
+    <style>
+        /* 状态标签样式 */
+        .status-tags .badge {
+            margin-left: 0.5rem;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .process-flow {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        .step {
+            flex: 1;
+            text-align: center;
+            position: relative;
+        }
+
+        .step-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #e9ecef;
+            margin: 0 auto 10px;
+            line-height: 40px;
+        }
+
+        .step.active .step-circle {
+            background: #0d6efd;
+            color: white;
+        }
+
+        .step.done .step-circle {
+            background: #198754;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container py-4">
+        <!-- 头部区域 -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3>案例名称：{{ fileName }}</h3>
+            <div class="status-tags">
+                <span class="badge bg-primary">分析阶段：{{ current_stage }}</span>
+                <span class="badge bg-success">当前轮次：第{{ current_round }}轮</span>
+            </div>
+        </div>
+
+        <!-- 流程可视化区域 -->
+        <div class="process-flow mb-4">
+            <div class="step done">
+                <div class="step-circle">1</div>
+                <div class="step-label">文件上传</div>
+            </div>
+            <div class="step active">
+                <div class="step-circle">2</div>
+                <div class="step-label">初步分析</div>
+            </div>
+            <!-- 其他步骤... -->
+        </div>
+
+        <!-- 操作面板 -->
+        <div class="action-panel mb-4">
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <button class="btn btn-primary" id="next-step">继续下一步</button>
+                <button class="btn btn-outline-secondary" id="refresh-status">刷新状态</button>
+            </div>
+        </div>
+
+        <!-- 对话交互区域 -->
+        <div class="chat-container card">
+            <div class="card-header">对话工作区</div>
+            <div class="card-body chat-messages" id="chat-messages">
+                <!-- 消息示例 -->
+                <div class="message ai-message">
+                    <div class="message-header">DeepSeek分析结果</div>
+                    <div class="message-content">正在分析文档结构...</div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <div class="input-group">
+                    <textarea class="form-control" placeholder="输入补充指令..." id="user-input"></textarea>
+                    <button class="btn btn-success" id="send-message">发送</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 使用EventSource接收流式数据
+        const eventSource = new EventSource(`/stream/${caseId}`);
+
+        eventSource.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            if (data.type === 'status_update') {
+                updateProgress(data);
+            } else {
+                appendMessage(data);
+            }
+        };
+
+        function appendMessage(data) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${data.role}-message`;
+            messageDiv.innerHTML = `
+        <div class="message-header">${data.sender}</div>
+        <div class="message-content">${data.content}</div>
+    `;
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+    </script>
+</body>
+
+</html>

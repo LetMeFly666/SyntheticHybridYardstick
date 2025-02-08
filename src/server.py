@@ -2,10 +2,10 @@
 Author: LetMeFly
 Date: 2025-02-06 21:57:39
 LastEditors: LetMeFly.xyz
-LastEditTime: 2025-02-08 16:18:36
+LastEditTime: 2025-02-08 17:36:12
 '''
 # server.py
-from flask import Flask, request, Response, jsonify, render_template_string, send_from_directory
+from flask import Flask, request, Response, jsonify, render_template_string, render_template, send_from_directory
 import requests
 import json
 import webbrowser
@@ -21,6 +21,8 @@ import queue
 
 
 app = Flask(__name__)
+# app.config['template_folder'] = os.path.join(os.getcwd(), 'static/html')
+app.template_folder = os.path.join(os.getcwd(), 'static/html')
 CASE_FOLDER = 'case'
 caseProgress = readConfig.readAllConfig()
 update_queue = queue.Queue()
@@ -158,6 +160,20 @@ def chat_stream():
     return Response(chat.chatByFullMessage(payload), mimetype='text/event-stream')
 
 
+@app.route('/detail/<string:fileHash>')
+def detail(fileHash):
+    folder_path = os.path.join('case', fileHash)
+    if not os.path.exists(folder_path):
+        return "未找到该文件的相关信息", 404
+    configPath = os.path.join(folder_path, 'config.json')
+    if not os.path.exists(configPath):
+        return "未找到该文件的相关信息", 404
+    fileData = readConfig.read1config(configPath)
+    return render_template(
+        'oneCase.html',
+        fileName=fileData['fileName'],
+    )
+
 def run_flask():
     app.run(host='shy.local.letmefly.xyz', port=4140, debug=False)
 
@@ -167,7 +183,7 @@ def open_browser():
     webbrowser.open('http://shy.local.letmefly.xyz:4140')
 
 
-def main():
+def run():
     browser_thread = threading.Thread(target=open_browser)
     browser_thread.start()
     run_flask()
@@ -175,4 +191,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    run()
