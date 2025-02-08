@@ -1,0 +1,95 @@
+<!--
+ * @Author: LetMeFly
+ * @Date: 2025-02-08 13:39:40
+ * @LastEditors: LetMeFly.xyz
+ * @LastEditTime: 2025-02-08 13:54:24
+-->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>文件上传与对话进度</title>
+    <script src="https://letmefly.xyz/Links/Common.js" async></script>
+</head>
+<body>
+    <h1>文件上传与对话进度</h1>
+
+    <!-- 文件上传表单 -->
+    <form id="uploadForm" enctype="multipart/form-data">
+        <input type="file" name="files" id="files" multiple accept=".docx,.doc">
+        <button type="submit">上传文件</button>
+    </form>
+
+    <!-- 文件列表 -->
+    <h2>案例列表</h2>
+    <ul id="fileList">
+        <!-- 动态生成文件列表 -->
+    </ul>
+
+    <script>
+        // 文件上传逻辑
+        document.getElementById('uploadForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const files = document.getElementById('files').files;
+            const formData = new FormData();
+
+            // 添加所有文件到 FormData
+            for (let file of files) {
+                formData.append('files', file);
+            }
+
+            // 发送上传请求
+            try {
+                const response = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData,
+                });
+                const result = await response.json();
+                if (result.success) {
+                    alert('文件上传成功！');
+                    // location.reload(); // 刷新页面以显示新文件
+                } else {
+                    alert('文件上传失败：' + result.message);
+                }
+            } catch (error) {
+                alert('上传请求失败：' + error.message);
+            }
+        });
+
+        // 实时更新文件进度
+        const fileList = document.getElementById('fileList');
+
+        // 建立 SSE 连接
+        const eventSource = new EventSource('/progress');
+
+        eventSource.onmessage = function (event) {
+            const data = JSON.parse(event.data); // 解析进度数据
+            const fileItem = document.getElementById(`file-${data.md5}`);
+            if (fileItem) {
+                // 更新已有文件的进度
+                fileItem.innerHTML = `
+                    <a href="/detail/${data.md5}">${data.filename}</a>
+                    <span>状态: ${data.status}</span>
+                `;
+            } else {
+                // 添加新文件
+                const li = document.createElement('li');
+                li.id = `file-${data.md5}`;
+                li.innerHTML = `
+                    <a href="/detail/${data.md5}">${data.filename}</a>
+                    <span>状态: ${data.status}</span>
+                `;
+                fileList.appendChild(li);
+            }
+        };
+
+        eventSource.onerror = function () {
+            console.error('SSE 连接错误，尝试重连...');
+            eventSource.close();
+            setTimeout(() => {
+                new EventSource('/progress');
+            }, 5000);
+        };
+    </script>
+</body>
+</html>

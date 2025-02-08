@@ -2,12 +2,13 @@
  * @Author: LetMeFly
  * @Date: 2025-02-07 22:01:23
  * @LastEditors: LetMeFly.xyz
- * @LastEditTime: 2025-02-08 13:24:29
+ * @LastEditTime: 2025-02-08 13:40:32
 -->
 <!DOCTYPE html>
 <html>
 
 <head>
+    <meta charset="UTF-8">
     <title>实时对话演示</title>
     <script src="https://letmefly.xyz/Links/Common.js" async></script>
     <script src="/static/js/marked.min.js"></script>
@@ -92,7 +93,10 @@
                     }
                     output.innerHTML += data.choices[0].delta.content || '';
                 } catch (e) {
-                    console.error('解析错误:', e);
+                    if (event.data == '[DONE]') {
+                        console.log('对话结束')
+                        eventSource.close();
+                    }
                 }
             };
 

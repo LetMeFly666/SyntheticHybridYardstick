@@ -2,7 +2,7 @@
  * @Author: LetMeFly
  * @Date: 2025-02-06 08:59:49
  * @LastEditors: LetMeFly.xyz
- * @LastEditTime: 2025-02-07 12:19:08
+ * @LastEditTime: 2025-02-08 14:07:09
 -->
 # SeekJudgeHybrid
 
@@ -19,6 +19,7 @@
 
 ### 细节
 
+1. 上传案例（doc或docx），自动去重（保存到`case/{文件md5}`下）
 1. Python[读案例](#读案例)（docx to text）
 2. [调用API](#调api)接口和DS初次对话
 3. 调用API接口和DS再次对话

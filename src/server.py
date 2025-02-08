@@ -2,10 +2,10 @@
 Author: LetMeFly
 Date: 2025-02-06 21:57:39
 LastEditors: LetMeFly.xyz
-LastEditTime: 2025-02-08 13:06:48
+LastEditTime: 2025-02-08 14:02:17
 '''
 # server.py
-from flask import Flask, request, Response, render_template_string, send_from_directory
+from flask import Flask, request, Response, jsonify, render_template_string, send_from_directory
 import requests
 import json
 import webbrowser
@@ -13,14 +13,23 @@ import threading
 import time
 from src import chat
 import os
+import hashlib
+
 
 app = Flask(__name__)
+UPLOAD_FOLDER = 'case'
+
+
+# 首页
+@app.route('/')
+def index():
+    return render_template_string(open('static/html/index.html', 'r', encoding='utf-8').read())
 
 
 # 单次对话
 @app.route('/singleChat')
-def index():
-    return render_template_string(open('static/singleChat.html', 'r', encoding='utf-8').read())
+def singleChat():
+    return render_template_string(open('static/html/singleChat.html', 'r', encoding='utf-8').read())
 
 
 # js
@@ -32,6 +41,33 @@ def js(filename):
     filePath = f'{os.getcwd()}/static/js'
     print(filePath)
     return send_from_directory(filePath, filename)
+
+
+# 文件上传
+@app.route('/upload', methods=['POST'])
+def upload():
+    if 'files' not in request.files:
+        return jsonify({'success': False, 'message': '未找到文件'}), 400
+    files = request.files.getlist('files')
+    for file in files:
+        if file and file.filename.endswith(('.docx', '.doc')):
+            file_content = file.read()
+            md5 = hashlib.md5(file_content).hexdigest()
+            fileData = {'fileName': file.filename}
+            folder_path = os.path.join(UPLOAD_FOLDER, md5)
+            configPath = os.path.join(folder_path, 'config.json')
+            if os.path.exists(folder_path):
+                with open(configPath, 'r', encoding='utf-8') as f:
+                    originalData = json.loads(f.read())
+                os.remove(''.join([folder_path, '/', originalData['fileName']]))
+            else:
+                os.makedirs(folder_path)
+            file_path = os.path.join(folder_path, file.filename)
+            with open(file_path, 'wb') as f:
+                f.write(file_content)
+            with open(configPath, 'w', encoding='utf-8') as f:
+                f.write(json.dumps(fileData, ensure_ascii=False))
+    return jsonify({'success': True, 'message': '文件上传成功'}), 200
 
 
 # 流式响应路由
