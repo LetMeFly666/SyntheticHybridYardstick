@@ -2,7 +2,7 @@
 Author: LetMeFly
 Date: 2025-02-06 21:57:39
 LastEditors: LetMeFly.xyz
-LastEditTime: 2025-02-07 22:45:47
+LastEditTime: 2025-02-08 12:04:04
 '''
 # server.py
 from flask import Flask, request, Response, render_template_string
@@ -11,6 +11,7 @@ import json
 import webbrowser
 import threading
 import time
+from src import chat
 
 app = Flask(__name__)
 
@@ -24,12 +25,6 @@ def index():
 def chat_stream():
     query = request.args.get('query')
     
-    # 转发到大模型API（示例URL，需替换为真实API）
-    url = "https://api.siliconflow.cn/v1/chat/completions"
-    headers = {
-        "Authorization": f"Bearer {open('password', 'r').read()}",
-        "Content-Type": "application/json"
-    }
     payload = {
         # "model": "Pro/deepseek-ai/DeepSeek-R1-Distill-Llama-8B",
         "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
@@ -42,32 +37,24 @@ def chat_stream():
         "stream": True
     }
     
-    # 关键：以流模式转发请求
-    def generate():
-        response = requests.post(
-            url,
-            json=payload,
-            headers=headers,
-            stream=True
-        )
-        
-        for chunk in response.iter_lines():
-            if chunk:  # 过滤空行
-                # 这里可以添加对大模型返回数据的解析逻辑
-                # print(chunk.decode('utf-8'))
-                yield f"{chunk.decode('utf-8')}\n\n"
-    
-    return Response(generate(), mimetype='text/event-stream')
+    return Response(chat.chatByFullMessage(payload), mimetype='text/event-stream')
+
 
 def run_flask():
     app.run(host='shy.local.letmefly.xyz', port=4140, debug=False)
+
 
 def open_browser():
     time.sleep(1.5)
     webbrowser.open('http://shy.local.letmefly.xyz:4140')
 
-if __name__ == '__main__':
+
+def main():
     browser_thread = threading.Thread(target=open_browser)
     browser_thread.start()
     run_flask()
     browser_thread.join()
+
+
+if __name__ == '__main__':
+    main()
