@@ -2,7 +2,7 @@
  * @Author: LetMeFly
  * @Date: 2025-02-08 13:39:40
  * @LastEditors: LetMeFly.xyz
- * @LastEditTime: 2025-02-08 13:54:24
+ * @LastEditTime: 2025-02-08 16:15:19
 -->
 <!DOCTYPE html>
 <html lang="zh-CN">
@@ -10,6 +10,15 @@
     <meta charset="UTF-8">
     <title>文件上传与对话进度</title>
     <script src="https://letmefly.xyz/Links/Common.js" async></script>
+    <style>
+        #fileList .file-item a.fileName {
+            display: inline-block;
+            width: 350px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    </style>
 </head>
 <body>
     <h1>文件上传与对话进度</h1>
@@ -24,9 +33,12 @@
     <h2>案例列表</h2>
     <ul id="fileList">
         <!-- 动态生成文件列表 -->
+        <!-- <li class="file-item" id="file-{md5}">
+            <a href="" class="fileName">[无结果版]苏某某、马某甲等婚约财产纠纷民事一审民...(FBM-CLI.C.558409211).doc</a>
+        </li> -->
     </ul>
 
-    <script>
+    <script name="文件上传">
         // 文件上传逻辑
         document.getElementById('uploadForm').addEventListener('submit', async function (e) {
             e.preventDefault();
@@ -55,32 +67,45 @@
                 alert('上传请求失败：' + error.message);
             }
         });
+    </script>
 
+    <script name="案例进度更新">
         // 实时更新文件进度
         const fileList = document.getElementById('fileList');
 
         // 建立 SSE 连接
         const eventSource = new EventSource('/progress');
 
-        eventSource.onmessage = function (event) {
-            const data = JSON.parse(event.data); // 解析进度数据
+        function render1file(data) {
             const fileItem = document.getElementById(`file-${data.md5}`);
             if (fileItem) {
                 // 更新已有文件的进度
                 fileItem.innerHTML = `
-                    <a href="/detail/${data.md5}">${data.filename}</a>
-                    <span>状态: ${data.status}</span>
+                    <a href="/detail/${data.md5}" class="fileName">${data.fileName}</a>
+                    <span>状态: ${data.progress.now}</span>
                 `;
             } else {
                 // 添加新文件
                 const li = document.createElement('li');
                 li.id = `file-${data.md5}`;
                 li.innerHTML = `
-                    <a href="/detail/${data.md5}">${data.filename}</a>
-                    <span>状态: ${data.status}</span>
+                    <a href="/detail/${data.md5}" class="fileName">${data.fileName}</a>
+                    <span>状态: ${data.progress.now}</span>
                 `;
+                li.setAttribute('class', 'file-item');
                 fileList.appendChild(li);
             }
+        }
+
+        function renderFiles(data) {
+            for (let fileHash in data) {
+                render1file(data[fileHash]);
+            }
+        }
+
+        eventSource.onmessage = function (event) {
+            const data = JSON.parse(event.data);  // 解析进度数据
+            renderFiles(data);
         };
 
         eventSource.onerror = function () {

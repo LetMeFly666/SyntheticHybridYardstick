@@ -2,7 +2,7 @@
 Author: LetMeFly
 Date: 2025-02-06 21:57:39
 LastEditors: LetMeFly.xyz
-LastEditTime: 2025-02-08 15:41:46
+LastEditTime: 2025-02-08 16:16:57
 '''
 # server.py
 from flask import Flask, request, Response, jsonify, render_template_string, send_from_directory
@@ -66,7 +66,10 @@ def upload():
                     'history': [
                         '上传案例文件'
                     ]
-                }
+                },
+                'md5': md5,
+                'created': time.time(),
+                'modified': time.time(),
             }
             folder_path = os.path.join(CASE_FOLDER, md5)
             configPath = os.path.join(folder_path, 'config.json')
@@ -74,6 +77,7 @@ def upload():
                 with open(configPath, 'r', encoding='utf-8') as f:
                     originalData = json.loads(f.read())
                 os.remove(''.join([folder_path, '/', originalData['fileName']]))
+                fileData['created'] = originalData['created']
             else:
                 os.makedirs(folder_path)
             file_path = os.path.join(folder_path, file.filename)
@@ -107,7 +111,6 @@ observer = Observer()
 observer.schedule(event_handler, CASE_FOLDER, recursive=True)
 # 启动观察者
 observer.start()
-
 
 
 def event_stream():

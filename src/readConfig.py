@@ -2,7 +2,7 @@
 Author: LetMeFly
 Date: 2025-02-08 15:10:19
 LastEditors: LetMeFly.xyz
-LastEditTime: 2025-02-08 15:41:01
+LastEditTime: 2025-02-08 16:08:46
 '''
 import os
 import json
@@ -11,10 +11,14 @@ import json
 def read1config(filePath: str) -> dict:
     with open(filePath, 'r', encoding='utf-8') as f:
         config: dict = json.loads(f.read())
+        # print(config)
         # 假设 config.json 中有一个 "progress" 字段表示对话进度
     return {
         'fileName': config['fileName'],
         'progress': config['progress'],
+        'md5': config['md5'],
+        'created': config['created'],
+        'modified': config['modified'],
     }
 
 
