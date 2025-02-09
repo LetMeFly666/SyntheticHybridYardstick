@@ -2,14 +2,14 @@
 Author: LetMeFly
 Date: 2025-02-09 10:18:43
 LastEditors: LetMeFly.xyz
-LastEditTime: 2025-02-09 19:57:55
+LastEditTime: 2025-02-09 21:41:30
 '''
 from flask import Flask, Response, jsonify, abort
 import threading
 from uuid import uuid4
 import time
 from collections import deque
-from typing import Dict
+from typing import Dict, TypedDict
 from src import file
 from src import chat
 import os
@@ -17,9 +17,15 @@ import requests
 import json
 
 
+class SessionDict(TypedDict):
+    status: str
+    complete: threading.Event
+    toSend: str
+    sent: str
+
 class Session:
     def __init__(self) -> None:
-        self.session = {
+        self.session: SessionDict = {
             'status': 'processing',
             'complete': threading.Event(),
             'toSend':'',
@@ -44,7 +50,16 @@ class ChatManager:
             data = session['sent'] + session['toSend']
             with open(f'case/{caseHash}/chat/02.txt', 'w', encoding='utf-8') as f:
                 f.write(data)
+            config = file.read_config(f'case/{caseHash}/config.json')
+            config['progress']['now'] = 'DS初步分析'
+            config['progress']['history'].append('DS初步分析')
+            config['modified'] = time.time()
+            with open(f'case/{caseHash}/config.json', 'w', encoding='utf-8') as f:
+                f.write(json.dumps(config, ensure_ascii=False))
             session['complete'].set()
+        time.sleep(1)  # 防止前端数据未读取完毕
+        with self.lock:
+            self.sessions.pop(caseHash)
     
     
     def __chat(self, caseHash: str, chatData: list) -> None:
@@ -71,9 +86,6 @@ class ChatManager:
             data = chunk.decode('utf-8').strip('data: ')
             if data == '[DONE]':
                 break
-            print('*' * 100)
-            print('*' + data + '*')  # debug
-            print('*' * 100)
             data = json.loads(data)
             thinkData = data['choices'][0]['delta'].get('reasoning_content', '')
             contentData = data['choices'][0]['delta'].get('content', '')
@@ -92,18 +104,12 @@ class ChatManager:
     
     def createSession(self, caseHash: str) -> Response:
         with self.lock:
-            print(caseHash)
-            print(self.sessions)
-            print(caseHash in self.sessions)
             if caseHash in self.sessions:
-                print('return 2' * 30)
                 return jsonify({
                     'code': 2,
                     'msg': '案例已存在'
                 })
             self.sessions[caseHash] = Session()  # fix: 判是否存在和设置案例存在要在一个锁里
-        with open('runtime', 'a') as f:
-            f.write(f'start {caseHash}\n')
         if not os.path.exists(f'case/{caseHash}'):
             return jsonify({
                 'code': 1,

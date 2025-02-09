@@ -2,7 +2,7 @@
  * @Author: LetMeFly
  * @Date: 2025-02-06 16:22:30
  * @LastEditors: LetMeFly.xyz
- * @LastEditTime: 2025-02-09 17:28:21
+ * @LastEditTime: 2025-02-09 21:32:54
  */
 我想写一个flask应用，可以让用户上传一些docx或者doc文件，然后flask在后台为这些文件每个建立一个文件夹，并调用DeepSeek的API进行多轮对话，并保存对话进度。
 主页可以上传文件、查看每个文件的对话进度（不需要显示具体对话内容，只需要显示“第一轮对话进行中”“第二轮对话已完成”等彩色tag）；点击一个文件可以进入这个文件的对话详情。
@@ -52,3 +52,35 @@ python类中方法单个下划线开头是什么
 ---
 
 这段代码
+
+---
+
+请解释python threading，包括但不限于`threading.Event()`、`threading.Event().set()`
+
+---
+
+python中
+
+class Session:
+    def __init__(self) -> None:
+        self.session = {
+            'status': 'processing',
+            'complete': threading.Event(),
+            'toSend':'',
+            'sent': '',
+        }
+session = Session().session
+session['complete']无法被编译器识别类型
+
+---
+
+
+python 随机生成长度为47的字母数字字符串
+
+---
+
+python生成时间字符串，UTC+8时间
+
+---
+
+请解释threading.Lock()

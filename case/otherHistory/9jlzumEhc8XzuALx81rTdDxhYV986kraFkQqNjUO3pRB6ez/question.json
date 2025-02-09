@@ -1,0 +1,1 @@
+{"model": "deepseek-r1", "messages": [{"role": "user", "content": "python 随机生成长度为47的字母数字字符串"}], "stream": true}

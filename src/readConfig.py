@@ -2,7 +2,7 @@
 Author: LetMeFly
 Date: 2025-02-08 15:10:19
 LastEditors: LetMeFly.xyz
-LastEditTime: 2025-02-08 16:08:46
+LastEditTime: 2025-02-09 21:09:04
 '''
 import os
 import json
@@ -25,6 +25,8 @@ def read1config(filePath: str) -> dict:
 def readAllConfig() -> dict:
     ans = {}
     for fileHash in os.listdir('case'):
+        if len(fileHash) != 32:
+            continue
         if not os.path.isdir(f'case/{fileHash}'):
             continue
         ans[fileHash] = read1config(f'case/{fileHash}/config.json')
