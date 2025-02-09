@@ -2,7 +2,7 @@
 Author: LetMeFly
 Date: 2025-02-06 21:57:39
 LastEditors: LetMeFly.xyz
-LastEditTime: 2025-02-08 22:02:53
+LastEditTime: 2025-02-09 14:13:32
 '''
 # server.py
 from flask import Flask, request, Response, jsonify, render_template_string, render_template, send_from_directory
@@ -145,8 +145,9 @@ def chat_stream():
     query = request.args.get('query')
     
     payload = {
-        # "model": "Pro/deepseek-ai/DeepSeek-R1-Distill-Llama-8B",
-        "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+        # "model": "Pro/deepseek-ai/DeepSeek-R1-Distill-Llama-8B",  # 硅基流动
+        # "model": "Qwen/Qwen2.5-Coder-7B-Instruct",  # 硅基流动
+        "model": "deepseek-r1",  # 腾讯云
         "messages": [
             {
                 "role": "user",

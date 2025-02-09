@@ -2,7 +2,7 @@
 Author: LetMeFly
 Date: 2025-02-09 10:18:43
 LastEditors: LetMeFly.xyz
-LastEditTime: 2025-02-09 12:26:20
+LastEditTime: 2025-02-09 14:01:44
 '''
 from flask import Flask, Response, jsonify, abort
 import threading
@@ -36,7 +36,9 @@ class ChatManager:
         config = file.read_config(f'case/{caseHash}/config.json')
         fileName = config['fileName']
         data = file.read_doc_docx(f'case/{caseHash}/{fileName}')
+        data = '请结合相关法律对本案进行判决\n\n' + data
         print(data)
+        
 
 chatManager = ChatManager()
 

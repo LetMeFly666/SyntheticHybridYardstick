@@ -2,7 +2,7 @@
  * @Author: LetMeFly
  * @Date: 2025-02-07 22:01:23
  * @LastEditors: LetMeFly.xyz
- * @LastEditTime: 2025-02-08 13:40:32
+ * @LastEditTime: 2025-02-09 16:42:18
 -->
 <!DOCTYPE html>
 <html>
@@ -12,9 +12,19 @@
     <title>实时对话演示</title>
     <script src="https://letmefly.xyz/Links/Common.js" async></script>
     <script src="/static/js/marked.min.js"></script>
+    <style>
+        .thinkTag {
+            color: #999;
+            font-style: italic;
+            margin-bottom: 10px;
+            margin-top: 10px;
+            border: #999 solid 1px;
+        }
+    </style>
 </head>
 
 <body>
+    <h2>当前仅支持一轮对话</h2>
     <div>
         <input type="text" id="input" placeholder="输入你的问题">
         <button onclick="startChat()">发送</button>
@@ -83,6 +93,7 @@
                 output.innerHTML = '正在思考...';
             };
             let first = true;
+            let ifThink = false;  // 假设如果有think一定是在对话的开始
             // 监听数据
             eventSource.onmessage = (event) => {
                 try {
@@ -91,7 +102,21 @@
                         output.innerHTML = '';
                         first = false;
                     }
-                    output.innerHTML += data.choices[0].delta.content || '';
+                    const thinkData = data.choices[0].delta.reasoning_content || '';
+                    const contentData = data.choices[0].delta.content || '';
+                    if (thinkData) {
+                        if (ifThink === false) {
+                            ifThink = true;
+                            const thinkTag = document.createElement('div');
+                            thinkTag.setAttribute('class', 'thinkTag');
+                            output.appendChild(thinkTag);
+                        }
+                        const thinkTag = output.querySelector('.thinkTag');
+                        thinkTag.innerHTML += thinkData;
+                    }
+                    if (contentData) {
+                        output.innerHTML += contentData;
+                    }
                 } catch (e) {
                     if (event.data == '[DONE]') {
                         console.log('对话结束')
