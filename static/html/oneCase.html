@@ -2,7 +2,7 @@
  * @Author: LetMeFly
  * @Date: 2025-02-08 17:09:53
  * @LastEditors: LetMeFly.xyz
- * @LastEditTime: 2025-02-09 19:38:40
+ * @LastEditTime: 2025-02-09 22:23:23
 -->
 <!DOCTYPE html>
 <html lang="zh-CN">
@@ -29,37 +29,31 @@
 
     <div id="progress">
         <div id="progress-1">
-            <h3>步骤1：上传案例文件</h3>
+            <h3>步骤1：上传案例文件(<span name="state"></span>)</h3>
             <div name="option"></div>
-            <div name="state"></div>
         </div>
         <div id="progress-2">
-            <h3>步骤2：DS初步分析</h3>
+            <h3>步骤2：DS初步分析(<span name="state"></span>)</h3>
             <div name="option">
                 
                 <button id="progress-2-start">开始分析</button>
             </div>
-            <div name="state"></div>
         </div>
         <div id="progress-3">
-            <h3>步骤3：给DS决策树并让它再次分析</h3>
+            <h3>步骤3：给DS决策树并让它再次分析(<span name="state"></span>)</h3>
             <div name="option"></div>
-            <div name="state"></div>
         </div>
         <div id="progress-4">
-            <h3>步骤4：纠正DS错误</h3>
+            <h3>步骤4：纠正DS错误(<span name="state"></span>)</h3>
             <div name="option"></div>
-            <div name="state"></div>
         </div>
         <div id="progress-5">
-            <h3>步骤5：错误纠正对话</h3>
+            <h3>步骤5：错误纠正对话(<span name="state"></span>)</h3>
             <div name="option"></div>
-            <div name="state"></div>
         </div>
         <div id="progress-6">
-            <h3>步骤6：生成使用决策树前后的结果对比表</h3>
+            <h3>步骤6：生成使用决策树前后的结果对比表(<span name="state"></span>)</h3>
             <div name="option"></div>
-            <div name="state"></div>
         </div>
     </div>
 
@@ -81,19 +75,19 @@
             for (var step = 1; step <= stepList.length; step++) {
                 const stepDiv = document.getElementById('progress-' + step);
                 const optionDiv = stepDiv.querySelector('[name=option]');
-                const statusDiv = stepDiv.querySelector('[name=state]');
+                const statusSpan = stepDiv.querySelector('[name=state]');
                 if (finished) {
-                    statusDiv.innerHTML = '已完成';
+                    statusSpan.innerHTML = '已完成';
                     optionDiv.classList.add('forbidden');
                     if (nowStep === stepList[step - 1]) {  // 刚好完成到这一步
                         finished = false;
                     }
                 } else {
                     if (nowStep === stepList[step - 2]) {  // 应该或者正在完成这一步
-                        statusDiv.innerHTML = '进行到';
+                        statusSpan.innerHTML = '进行到';
                         optionDiv.classList.remove('forbidden');
                     } else {
-                        statusDiv.innerHTML = '未开始';
+                        statusSpan.innerHTML = '未开始';
                         optionDiv.classList.add('forbidden');
                     }
                 }
@@ -111,34 +105,47 @@
 
         const progress_2_start = document.querySelector('#progress-2-start');
         progress_2_start.onclick = async () => {
-            progress_2_start.disabled = true;
-            
+            // progress_2_start.disabled = true;
+            fetch(`/chatStart/${caseHash}`, {
+                method: 'POST',
+            }).then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error(`请求失败，状态码: ${response.status}`);
+                }
+            }).then(result => {
+                console.log(result);
+                alert(result['msg']);
+            }).catch(error => {
+                alert('请求失败' + error);
+            });
         };
     </script>
 
     <script>
-        // 使用EventSource接收流式数据
-        const eventSource = new EventSource(`/stream/${caseId}`);
+        // // 使用EventSource接收流式数据
+        // const eventSource = new EventSource(`/stream/${caseId}`);
 
-        eventSource.onmessage = (event) => {
-            const data = JSON.parse(event.data);
-            if (data.type === 'status_update') {
-                updateProgress(data);
-            } else {
-                appendMessage(data);
-            }
-        };
+        // eventSource.onmessage = (event) => {
+        //     const data = JSON.parse(event.data);
+        //     if (data.type === 'status_update') {
+        //         updateProgress(data);
+        //     } else {
+        //         appendMessage(data);
+        //     }
+        // };
 
-        function appendMessage(data) {
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `message ${data.role}-message`;
-            messageDiv.innerHTML = `
-                <div class="message-header">${data.sender}</div>
-                <div class="message-content">${data.content}</div>
-            `;
-            chatMessages.appendChild(messageDiv);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
+        // function appendMessage(data) {
+        //     const messageDiv = document.createElement('div');
+        //     messageDiv.className = `message ${data.role}-message`;
+        //     messageDiv.innerHTML = `
+        //         <div class="message-header">${data.sender}</div>
+        //         <div class="message-content">${data.content}</div>
+        //     `;
+        //     chatMessages.appendChild(messageDiv);
+        //     chatMessages.scrollTop = chatMessages.scrollHeight;
+        // }
     </script>
 </body>
 

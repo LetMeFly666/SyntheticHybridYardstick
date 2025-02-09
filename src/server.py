@@ -2,7 +2,7 @@
 Author: LetMeFly
 Date: 2025-02-06 21:57:39
 LastEditors: LetMeFly.xyz
-LastEditTime: 2025-02-09 19:41:56
+LastEditTime: 2025-02-09 22:18:48
 '''
 # server.py
 from flask import Flask, request, Response, jsonify, render_template_string, render_template, send_from_directory
@@ -58,7 +58,7 @@ def upload():
         return jsonify({'success': False, 'message': '未找到文件'}), 400
     files = request.files.getlist('files')
     for file in files:
-        if file and file.filename.endswith(('.docx', '.doc')):
+        if file and file.filename.endswith(('.docx', '.doc', '.txt')):
             file_content = file.read()
             md5 = hashlib.md5(file_content).hexdigest()
             fileData = {
@@ -172,7 +172,7 @@ def detail(fileHash):
     )
 
 
-@app.route('/chatStart/<string:caseHash>')  # TODO: 修改为POST
+@app.route('/chatStart/<string:caseHash>', methods=['POST'])
 def chatStart(caseHash):
     return chatStream.chatManager.createSession(caseHash)
 

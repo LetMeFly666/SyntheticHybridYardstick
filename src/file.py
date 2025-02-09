@@ -2,7 +2,7 @@
 Author: LetMeFly
 Date: 2025-02-09 10:33:13
 LastEditors: LetMeFly.xyz
-LastEditTime: 2025-02-09 12:49:07
+LastEditTime: 2025-02-09 21:45:02
 '''
 import pypandoc
 import json
@@ -57,6 +57,15 @@ def read_doc_docx(filePath: str) -> str:
         doc2docx(filePath)
         filePath = filePath + 'x'
     return read_docx(filePath)
+
+
+"""doc(x)|txt -> str"""
+def read_doc_docx_txt(filePath: str) -> str:
+    if filePath.endswith('.doc') or filePath.endswith('.docx'):
+        return read_doc_docx(filePath)
+    with open(filePath, 'r', encoding='utf-8') as f:
+        data = f.read()
+    return data
         
 
 """json -> dict"""

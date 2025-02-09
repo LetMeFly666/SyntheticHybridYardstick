@@ -2,7 +2,7 @@
 Author: LetMeFly
 Date: 2025-02-09 10:18:43
 LastEditors: LetMeFly.xyz
-LastEditTime: 2025-02-09 21:41:30
+LastEditTime: 2025-02-09 22:26:46
 '''
 from flask import Flask, Response, jsonify, abort
 import threading
@@ -107,7 +107,7 @@ class ChatManager:
             if caseHash in self.sessions:
                 return jsonify({
                     'code': 2,
-                    'msg': '案例已存在'
+                    'msg': '案例正在对话中'
                 })
             self.sessions[caseHash] = Session()  # fix: 判是否存在和设置案例存在要在一个锁里
         if not os.path.exists(f'case/{caseHash}'):
@@ -118,7 +118,7 @@ class ChatManager:
         os.makedirs(f'case/{caseHash}/chat', exist_ok=True)
         config = file.read_config(f'case/{caseHash}/config.json')
         fileName = config['fileName']
-        data = file.read_doc_docx(f'case/{caseHash}/{fileName}')
+        data = file.read_doc_docx_txt(f'case/{caseHash}/{fileName}')
         data = '请结合相关法律对本案进行判决\n\n' + data
         message = [
             {

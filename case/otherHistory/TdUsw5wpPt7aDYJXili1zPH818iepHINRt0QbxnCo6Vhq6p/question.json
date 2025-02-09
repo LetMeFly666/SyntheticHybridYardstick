@@ -1,0 +1,1 @@
+{"model": "deepseek-r1", "messages": [{"role": "user", "content": "python读文件时如何根据编码自适应"}], "stream": true}
