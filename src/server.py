@@ -2,7 +2,7 @@
 Author: LetMeFly
 Date: 2025-02-06 21:57:39
 LastEditors: LetMeFly.xyz
-LastEditTime: 2025-02-09 14:13:32
+LastEditTime: 2025-02-09 19:41:56
 '''
 # server.py
 from flask import Flask, request, Response, jsonify, render_template_string, render_template, send_from_directory
@@ -18,6 +18,7 @@ import hashlib
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 import queue
+from src import chatStream
 
 
 app = Flask(__name__)
@@ -144,20 +145,14 @@ def get_progress():
 def chat_stream():
     query = request.args.get('query')
     
-    payload = {
-        # "model": "Pro/deepseek-ai/DeepSeek-R1-Distill-Llama-8B",  # 硅基流动
-        # "model": "Qwen/Qwen2.5-Coder-7B-Instruct",  # 硅基流动
-        "model": "deepseek-r1",  # 腾讯云
-        "messages": [
-            {
-                "role": "user",
-                "content": query
-            }
-        ],
-        "stream": True
-    }
+    message = [
+        {
+            "role": "user",
+            "content": query
+        }
+    ]
     
-    return Response(chat.chatByFullMessage(payload), mimetype='text/event-stream')
+    return Response(chat.chatByMessage(message), mimetype='text/event-stream')
 
 
 @app.route('/detail/<string:fileHash>')
@@ -173,7 +168,23 @@ def detail(fileHash):
         'oneCase.html',
         fileName=fileData['fileName'],
         progress_now=fileData['progress']['now'],
+        caseHash=fileData['md5'],
     )
+
+
+@app.route('/chatStart/<string:caseHash>')  # TODO: 修改为POST
+def chatStart(caseHash):
+    return chatStream.chatManager.createSession(caseHash)
+
+
+@app.route('/chatData/<string:caseHash>')
+def chatData(caseHash):
+    pass
+
+
+@app.route('/chatStatus/<string:caseHash>')
+def chatStatus(caseHash):
+    return chatStream.chatManager.getStatus(caseHash)
 
 def run_flask():
     app.run(host='shy.local.letmefly.xyz', port=4140, debug=False)
