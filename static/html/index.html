@@ -2,7 +2,7 @@
  * @Author: LetMeFly
  * @Date: 2025-02-08 13:39:40
  * @LastEditors: LetMeFly.xyz
- * @LastEditTime: 2025-02-09 21:43:03
+ * @LastEditTime: 2025-02-10 14:10:22
 -->
 <!DOCTYPE html>
 <html lang="zh-CN">
@@ -52,6 +52,8 @@
             <a href="" class="fileName">[无结果版]苏某某、马某甲等婚约财产纠纷民事一审民...(FBM-CLI.C.558409211).doc</a>
         </li> -->
     </ul>
+
+    <button id="singleChat">单次对话</button>
 
     <script name="文件上传">
         // 文件上传逻辑
@@ -158,6 +160,12 @@
         setTimeout(() => {
             renderMermaid();
         }, 10);
+    </script>
+
+    <script>
+        document.getElementById('singleChat').onclick = () => {
+            window.location.href = '/singleChat';
+        };
     </script>
 </body>
 </html>

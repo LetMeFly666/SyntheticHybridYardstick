@@ -1,0 +1,1 @@
+{"model": "deepseek-r1", "messages": [{"role": "user", "content": "C:\\Users\\WDAGUtilityAccount>Bcdedit.exe -set TESTSIGNING OFF 无法打开启动配置数据存储。 找不到请求的系统设备。"}], "stream": true}

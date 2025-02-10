@@ -1,0 +1,1 @@
+{"model": "deepseek-r1", "messages": [{"role": "user", "content": "严重性\t代码\t说明\t项目\t文件\t行\t禁止显示状态 错误\tLNK1104\t无法打开文件“F:\\OtherApps\\Program\\QT\\Apps\\5.15.2\\msvc2019_64\\lib.obj”\tQSbieAPI\tC:\\Users\\LetMeFly\\Desktop\\sandbox\\Sandboxie\\SandboxiePlus\\QSbieAPI\\LINK\t1\t"}], "stream": true}

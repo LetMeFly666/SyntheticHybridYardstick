@@ -2,14 +2,14 @@
  * @Author: LetMeFly
  * @Date: 2025-02-07 22:01:23
  * @LastEditors: LetMeFly.xyz
- * @LastEditTime: 2025-02-09 16:47:49
+ * @LastEditTime: 2025-02-10 22:31:08
 -->
 <!DOCTYPE html>
 <html>
 
 <head>
     <meta charset="UTF-8">
-    <title>实时对话演示</title>
+    <title>LetSHY - 实时对话演示</title>
     <script src="https://letmefly.xyz/Links/Common.js" async></script>
     <script src="/static/js/marked.min.js"></script>
     <style>
@@ -80,6 +80,7 @@
 
         function startChat() {
             const input = document.getElementById('input').value;
+            document.title = 'LetSHY - ' + input || '';
             const output = document.getElementById('output');
             output.innerHTML = '发起请求...';
 
@@ -94,8 +95,10 @@
             };
             let first = true;
             let ifThink = false;  // 假设如果有think一定是在对话的开始
+            let globalDataInFunction = '';
             // 监听数据
             eventSource.onmessage = (event) => {
+                globalDataInFunction = event.data;
                 try {
                     const data = JSON.parse(event.data);
                     if (first) {
@@ -122,12 +125,23 @@
                         console.log('对话结束')
                         eventSource.close();
                     }
+                    try {
+                        const data = JSON.parse(globalDataInFunction);
+                        if (data['error']['message'] == 'concurrency exceeded') {
+                            output.innerHTML = '并发过大，超过API提供方限制';
+                        }
+                        console.log('对话结束')
+                        eventSource.close();
+                    } catch (e) {
+                        console.log(e)
+                    }
                 }
             };
 
             eventSource.onerror = (err) => {
                 console.error('连接错误:', err);
                 eventSource.close();
+                output.innerHTML = '连接错误！';
             };
         }
     </script>

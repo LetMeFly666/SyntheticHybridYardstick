@@ -1,0 +1,1 @@
+{"model": "deepseek-r1", "messages": [{"role": "user", "content": "F:\\OtherApps\\Program\\VS2022\\Community\\MSBuild\\Microsoft\\VC\\v170\\Microsoft.CppBuild.targets(456,5): error MSB8020: 无法找到 Visual Studio 2019 的生成工具(平台工具集 =“v142”)。若要使用 v142 生成工具进行生成，请安装 Visual Studio 2019 生成工具。或者，可以升级到当前 Visual Studio "}], "stream": true}

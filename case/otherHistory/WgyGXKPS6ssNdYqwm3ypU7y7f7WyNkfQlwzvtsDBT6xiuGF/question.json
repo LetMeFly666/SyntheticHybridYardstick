@@ -1,0 +1,1 @@
+{"model": "deepseek-r1", "messages": [{"role": "user", "content": "严重性\t代码\t说明\t项目\t文件\t行\t禁止显示状态 错误\tLNK2001\t无法解析的外部符号 \"__declspec(dllimport) void __cdecl qt_assert(char const *,char const *,int)\" (__imp_?qt_assert@@YAXPEBD0H@Z)\tQSbieAPI\tC:\\Users\\LetMeFly\\Desktop\\sandbox\\Sandboxie\\SandboxiePlus\\QSbieAPI\\SbieIni.obj\t1\t"}], "stream": true}

@@ -1,0 +1,1 @@
+{"model": "deepseek-r1", "messages": [{"role": "user", "content": "Git如何merge另一个仓库的一个commit"}], "stream": true}

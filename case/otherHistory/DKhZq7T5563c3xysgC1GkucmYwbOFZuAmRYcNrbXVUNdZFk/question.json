@@ -1,0 +1,1 @@
+{"model": "deepseek-r1", "messages": [{"role": "user", "content": "请详细解释git fetch fetch之后的数据到了哪里？如何删除fetch到的数据 如果fetch其他仓库会怎样"}], "stream": true}

@@ -2,7 +2,7 @@
 Author: LetMeFly
 Date: 2025-02-08 11:58:17
 LastEditors: LetMeFly.xyz
-LastEditTime: 2025-02-09 21:32:04
+LastEditTime: 2025-02-10 22:26:14
 '''
 import requests
 from typing import Generator, Callable, List
@@ -68,7 +68,10 @@ def chatByFullMessage(payload: dict) -> Generator[str, any, None]:
                     responseData += contentData
             except:
                 pass
-            yield f"{chunk.decode('utf-8')}\n\n"
+            toReturn = f"{chunk.decode('utf-8')}\n\n"
+            if not toReturn.startswith('data: '):
+                toReturn = 'data: ' + toReturn
+            yield toReturn
     
         with open(f'{folderPath}/response.txt', 'w', encoding='utf-8') as f:
             f.write(responseData)

@@ -1,0 +1,1 @@
+{"model": "deepseek-r1", "messages": [{"role": "user", "content": "git cherry-pick可以自定义commit message吗"}], "stream": true}

@@ -1,0 +1,82 @@
+<div class="thinkTag">
+
+嗯，用户问的是“on: workflow_dispatch:是什么意思”。首先，我需要确定他们是在GitHub Actions的上下文中提问的。workflow_dispatch是GitHub Actions中的一个事件触发器，所以用户可能在使用或学习GitHub的工作流程配置。
+
+接下来，我应该解释workflow_dispatch的基本作用。它是允许手动触发工作流程的事件，用户可能想知道如何在GitHub界面上手动运行一个工作流，或者他们的配置是否有问题。可能需要详细说明如何配置和使用这个触发器，包括输入参数的部分。
+
+用户可能对YAML语法不太熟悉，所以需要给出一个例子，说明在workflow文件中如何添加这个事件。同时，要提到在仓库的Actions标签页里会出现一个按钮，让用户可以手动运行，可能还会涉及输入参数的传递。
+
+还要考虑用户可能的错误，比如拼写错误或者缩进问题，导致workflow_dispatch没有生效。这时候需要提醒他们检查YAML文件的格式是否正确，是否在正确的层级下。
+
+另外，用户可能想知道什么时候应该使用手动触发，比如测试、调试或者特定条件下的部署。需要举例说明使用场景，帮助用户理解其应用场景。
+
+最后，确保回答简洁明了，覆盖用户可能的疑问点，比如如何操作、配置示例、使用场景以及常见问题。可能需要避免使用过多技术术语，或者至少解释清楚术语，让新手也能理解。
+
+
+</div>
+
+
+
+`on: workflow_dispatch` 是 **GitHub Actions** 工作流程配置文件中使用的一个触发器（event），表示允许通过 GitHub 的界面、API 或 CLI **手动触发**该工作流程的运行。
+
+---
+
+### 具体含义
+1. **手动触发**：  
+   默认情况下，GitHub Actions 的工作流程由特定事件自动触发（例如 `push` 到代码库或创建 `pull_request`）。而 `workflow_dispatch` 允许你通过以下方式手动触发工作流程：
+   - 在 GitHub 仓库的 **Actions** 标签页中点击 **Run workflow** 按钮。
+   - 通过 GitHub REST API 发送请求。
+   - 使用 GitHub CLI 命令（如 `gh workflow run`）。
+
+2. **输入参数**（可选）：  
+   你可以在工作流程中定义输入参数（`inputs`），在手动触发时指定这些参数的值，实现动态配置。例如：
+   ```yaml
+   on:
+     workflow_dispatch:
+       inputs:
+         environment:
+           description: 'Deploy environment'
+           required: true
+           default: 'staging'
+   ```
+
+---
+
+### 配置示例
+```yaml
+name: Manual Workflow
+on:
+  workflow_dispatch:
+    inputs:
+      log_level:
+        description: 'Log level'
+        required: true
+        default: 'warning'
+      tags:
+        description: 'Test tags'
+        required: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print inputs
+        run: |
+          echo "Log level: ${{ github.event.inputs.log_level }}"
+          echo "Tags: ${{ github.event.inputs.tags }}"
+```
+
+---
+
+### 使用场景
+- **测试或调试**：无需提交代码即可运行工作流程。
+- **定时任务补充**：在定时任务（`schedule`）之外临时执行。
+- **参数化执行**：根据输入的参数执行不同的逻辑（如部署到不同环境）。
+
+---
+
+### 注意事项
+- 工作流程文件需存放在默认分支（如 `main` 或 `master`）或已合并的分支才能手动触发。
+- 输入参数的值可通过 `github.event.inputs.<input_name>` 在工作流程中访问。
+
+如果有其他疑问，可以进一步讨论！
