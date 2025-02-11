@@ -1,0 +1,1 @@
+{"model": "deepseek-r1", "messages": [{"role": "user", "content": ".thinkTag {     color: gray;     border-left: #ccc solid 1px;     padding-left: 10px; }  .thinkTag::before {     content: '💭思考内容';     padding-right: 5px; }  有没有办法让thinkTag的做边框在“💭思考内容”之后开始出现，思考内容左移一段，💭和左边框对对齐"}], "stream": true}

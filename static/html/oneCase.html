@@ -2,7 +2,7 @@
  * @Author: LetMeFly
  * @Date: 2025-02-08 17:09:53
  * @LastEditors: LetMeFly.xyz
- * @LastEditTime: 2025-02-09 22:31:08
+ * @LastEditTime: 2025-02-11 13:50:34
 -->
 <!DOCTYPE html>
 <html lang="zh-CN">
@@ -11,9 +11,56 @@
     <meta charset="UTF-8">
     <title>案例 - {{ fileName }}</title>
     <script src="https://letmefly.xyz/Links/Common.js" async></script>
+    <script src="/static/js/marked.min.js"></script>
     <style>
         .forbidden {
             display: none;
+        }
+
+        details[open] {
+            border: 1px solid #ccc;
+            /* 边框样式 */
+            border-radius: 4px;
+            /* 圆角效果 */
+            padding: 10px;
+            /* 内边距 */
+            margin: 5px 0;
+            /* 外边距 */
+        }
+
+        /* 可选：自定义summary的样式 */
+        summary {
+            cursor: pointer;
+            padding: 4px;
+            list-style: none;
+            /* 去除默认三角符号 */
+        }
+
+        /* 自定义三角图标 */
+        summary::marker {
+            display: none;
+        }
+
+        summary::before {
+            content: "👉";
+            /* 闭合时显示👉 */
+            padding-right: 6px;
+        }
+
+        details[open] summary::before {
+            content: "👇";
+            /* 展开时显示👇 */
+        }
+
+        .thinkTag {
+            color: gray;
+            border-left: #ccc solid 1px;
+            padding-left: 10px;
+        }
+
+        .thinkTag::before {
+            content: '💭思考内容';
+            margin-left: -15px;
         }
     </style>
 </head>
@@ -37,6 +84,13 @@
             <div name="option">
                 <button id="progress-2-start">开始分析</button>
             </div>
+            <details name="log" id="log2">
+                <summary>步骤日志</summary>
+                <div name="log-content">
+                    <div class="output forbidden" id="output2"></div>
+                    <div class="markdown" id="markdown2"></div>
+                </div>
+            </details>
         </div>
         <div id="progress-3">
             <h3>步骤3：给DS决策树并让它再次分析(<span name="state"></span>)</h3>
@@ -55,6 +109,59 @@
             <div name="option"></div>
         </div>
     </div>
+    <script name="showLogs">
+        function showLog1() {
+            // Nothing to do
+        }
+
+        let eventSource2;
+        let alreadyEnd = true;  // 防止本来就对话结束导致的重复渲染
+        function showLog2() {
+            if (eventSource2) {
+                eventSource2.close();
+            }
+            const eventSource = new EventSource(`/chatData/${caseHash}`);
+            eventSource2 = eventSource;
+            const output = document.querySelector('#progress-2 [name=log] .output');
+            var responseText = '';
+            eventSource.onmessage = () => {
+                const data = JSON.parse(event.data);
+                responseText += data['content'];
+                output.innerHTML = responseText;
+                if (data['code'] == 1) {  // 结束
+                    eventSource.close();
+                    if (!alreadyEnd) {
+                        alert('对话结束');
+                        renderProgress();  // 重新渲染对话状态
+                    }
+                    return;
+                }
+                if (data['code'] == 2) {  // 对话不存在
+                    eventSource.close();
+                    console.log('对话不存在！');
+                } else {
+                    alreadyEnd = false;
+                }
+            };
+            eventSource.onerror = (err) => {
+                console.log('连接错误！', err);
+                eventSource.close();
+            }
+        }
+
+        function showLog3() {
+
+        }
+
+        function showLog4() {
+
+        }
+
+        function showLog5() {
+
+        }
+
+    </script>
 
     <script>
         const caseHash = '{{ caseHash }}';
@@ -63,8 +170,14 @@
             'DS初步分析',                   // 2
             '给DS决策树并让它再次分析',      // 3
             '纠正DS错误',                   // 4
-            '错误纠正对话',                 // 5 - optional
-            '生成使用决策树前后的结果对比表'  // 6
+            '生成使用决策树前后的结果对比表'  // 5
+        ];
+        const showLogFunctions = [
+            showLog1,  // step1
+            showLog2,  // step2
+            showLog3,  // step3
+            showLog4,  // step4
+            showLog5,  // step5
         ];
         const nowStep = '{{ progress_now }}';
 
@@ -75,9 +188,11 @@
                 const stepDiv = document.getElementById('progress-' + step);
                 const optionDiv = stepDiv.querySelector('[name=option]');
                 const statusSpan = stepDiv.querySelector('[name=state]');
+                const logDetails = stepDiv.querySelector('[name=log]');
                 if (finished) {
                     statusSpan.innerHTML = '已完成';
                     optionDiv.classList.add('forbidden');
+                    showLogFunctions[step - 1]();
                     if (nowStep === stepList[step - 1]) {  // 刚好完成到这一步
                         finished = false;
                     }
@@ -85,19 +200,20 @@
                     if (nowStep === stepList[step - 2]) {  // 应该或者正在完成这一步
                         statusSpan.innerHTML = '进行到';
                         optionDiv.classList.remove('forbidden');
+                        showLogFunctions[step - 1]();
                     } else {
                         statusSpan.innerHTML = '未开始';
                         optionDiv.classList.add('forbidden');
+                        logDetails && logDetails.classList.add('forbidden');
                     }
                 }
             }
         }
 
         renderProgress();
-
     </script>
 
-    <script>
+    <script name="option">
         document.querySelector('#backToMainPage').onclick = () => {
             window.location.href = '/';
         };
@@ -105,6 +221,7 @@
         const progress_2_start = document.querySelector('#progress-2-start');
         progress_2_start.onclick = async () => {
             // progress_2_start.disabled = true;
+            document.querySelector('#log2').setAttribute('open', '');
             fetch(`/chatStart/${caseHash}`, {
                 method: 'POST',
             }).then(response => {
@@ -116,10 +233,43 @@
             }).then(result => {
                 console.log(result);
                 alert(result['msg']);
+                showLog2();
             }).catch(error => {
                 alert('请求失败' + error);
             });
         };
+    </script>
+
+    <script name="markdownRender">
+        // 配置观察选项
+        const config = {
+            childList: true, // 观察子节点的变化
+            subtree: true,   // 观察所有后代节点
+            characterData: true // 观察文本内容的变化
+        };
+
+        // markdown渲染2 - 这里先堆点shiShan代码好了
+        const output2 = document.getElementById('output2');
+        const markdown2 = document.getElementById('markdown2');
+        function renderMarkdown2() {
+            const inputText = output2.innerHTML;
+            const renderedHtml = marked.parse(inputText);
+            markdown2.innerHTML = renderedHtml;
+        }
+        // 创建一个回调函数，当观察到变化时执行
+        const onOutputModified2 = function (mutationsList, observer) {
+            for (let mutation of mutationsList) {
+                if (mutation.type === 'childList' || mutation.type === 'characterData') {
+                    // 调用 renderMarkdown 函数
+                    renderMarkdown2();
+                }
+            }
+        };
+        // 创建一个 MutationObserver 实例并传入回调函数
+        const observer2 = new MutationObserver(onOutputModified2);
+        // 开始观察目标节点
+        observer2.observe(output2, config);
+
     </script>
 
     <script>

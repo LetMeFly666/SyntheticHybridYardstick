@@ -2,7 +2,7 @@
 Author: LetMeFly
 Date: 2025-02-08 15:10:19
 LastEditors: LetMeFly.xyz
-LastEditTime: 2025-02-09 21:09:04
+LastEditTime: 2025-02-11 10:27:39
 '''
 import os
 import json
@@ -35,7 +35,6 @@ def readAllConfig() -> dict:
 
 # 增量更新，返回是否更新
 def updateChangedDict(caseProgress: dict, event) -> bool:
-    print(event.is_directory)
     if event.is_directory:
         return False
     filePath: str = event.src_path

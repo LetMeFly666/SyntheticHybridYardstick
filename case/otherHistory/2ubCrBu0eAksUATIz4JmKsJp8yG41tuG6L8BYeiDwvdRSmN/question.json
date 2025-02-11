@@ -1,0 +1,1 @@
+{"model": "deepseek-r1", "messages": [{"role": "user", "content": "python中session['toSend']是一个字符串 如何拷贝这个字符串并赋值给a变量，使得session['toSend']值的修改不会影响a的值"}], "stream": true}

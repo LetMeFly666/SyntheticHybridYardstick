@@ -1,0 +1,1 @@
+{"model": "deepseek-r1", "messages": [{"role": "user", "content": "<details name=\"log\">     <summary>步骤日志</summary>     你好... </details>  如何让details展开后有一个框框住所有内容"}], "stream": true}

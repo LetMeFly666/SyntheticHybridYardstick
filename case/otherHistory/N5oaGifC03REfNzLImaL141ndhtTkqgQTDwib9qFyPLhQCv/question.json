@@ -1,0 +1,1 @@
+{"model": "deepseek-r1", "messages": [{"role": "user", "content": "JS先调用一个函数，再将函数在后面声明，可以吗？  a = f()  function f() {     return 1 }"}], "stream": true}

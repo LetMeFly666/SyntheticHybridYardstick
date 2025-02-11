@@ -2,7 +2,7 @@
  * @Author: LetMeFly
  * @Date: 2025-02-07 22:01:23
  * @LastEditors: LetMeFly.xyz
- * @LastEditTime: 2025-02-10 22:31:08
+ * @LastEditTime: 2025-02-11 12:16:48
 -->
 <!DOCTYPE html>
 <html>
@@ -124,6 +124,7 @@
                     if (event.data == '[DONE]') {
                         console.log('对话结束')
                         eventSource.close();
+                        return;
                     }
                     try {
                         const data = JSON.parse(globalDataInFunction);

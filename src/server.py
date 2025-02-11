@@ -2,7 +2,7 @@
 Author: LetMeFly
 Date: 2025-02-06 21:57:39
 LastEditors: LetMeFly.xyz
-LastEditTime: 2025-02-09 22:18:48
+LastEditTime: 2025-02-11 11:08:14
 '''
 # server.py
 from flask import Flask, request, Response, jsonify, render_template_string, render_template, send_from_directory
@@ -43,11 +43,9 @@ def singleChat():
 # js
 @app.route('/static/js/<path:filename>')
 def js(filename):
-    print(filename)
     # filePath = os.path.join(app.root_path, '..', 'static', 'js')
     # filePath = f'{app.root_path}/static/js'
     filePath = f'{os.getcwd()}/static/js'
-    print(filePath)
     return send_from_directory(filePath, filename)
 
 
@@ -58,35 +56,36 @@ def upload():
         return jsonify({'success': False, 'message': '未找到文件'}), 400
     files = request.files.getlist('files')
     for file in files:
-        if file and file.filename.endswith(('.docx', '.doc', '.txt')):
-            file_content = file.read()
-            md5 = hashlib.md5(file_content).hexdigest()
-            fileData = {
-                'fileName': file.filename,
-                'progress': {
-                    'now': '上传案例文件',
-                    'history': [
-                        '上传案例文件'
-                    ]
-                },
-                'md5': md5,
-                'created': time.time(),
-                'modified': time.time(),
-            }
-            folder_path = os.path.join(CASE_FOLDER, md5)
-            configPath = os.path.join(folder_path, 'config.json')
-            if os.path.exists(folder_path):
-                with open(configPath, 'r', encoding='utf-8') as f:
-                    originalData = json.loads(f.read())
-                os.remove(''.join([folder_path, '/', originalData['fileName']]))
-                fileData['created'] = originalData['created']
-            else:
-                os.makedirs(folder_path)
-            file_path = os.path.join(folder_path, file.filename)
-            with open(file_path, 'wb') as f:
-                f.write(file_content)
-            with open(configPath, 'w', encoding='utf-8') as f:
-                f.write(json.dumps(fileData, ensure_ascii=False))
+        if not file or not file.filename.endswith(('.docx', '.doc', '.txt')):
+            continue
+        file_content = file.read()
+        md5 = hashlib.md5(file_content).hexdigest()
+        fileData = {
+            'fileName': file.filename,
+            'progress': {
+                'now': '上传案例文件',
+                'history': [
+                    '上传案例文件'
+                ]
+            },
+            'md5': md5,
+            'created': time.time(),
+            'modified': time.time(),
+        }
+        folder_path = os.path.join(CASE_FOLDER, md5)
+        configPath = os.path.join(folder_path, 'config.json')
+        if os.path.exists(folder_path):
+            with open(configPath, 'r', encoding='utf-8') as f:
+                originalData = json.loads(f.read())
+            os.remove(''.join([folder_path, '/', originalData['fileName']]))
+            fileData['created'] = originalData['created']
+        else:
+            os.makedirs(folder_path)
+        file_path = os.path.join(folder_path, file.filename)
+        with open(file_path, 'wb') as f:
+            f.write(file_content)
+        with open(configPath, 'w', encoding='utf-8') as f:
+            f.write(json.dumps(fileData, ensure_ascii=False))
     return jsonify({'success': True, 'message': '文件上传成功'}), 200
 
 
@@ -179,7 +178,7 @@ def chatStart(caseHash):
 
 @app.route('/chatData/<string:caseHash>')
 def chatData(caseHash):
-    pass
+    return chatStream.chatManager.getChatData(caseHash)
 
 
 @app.route('/chatStatus/<string:caseHash>')
@@ -192,7 +191,7 @@ def run_flask():
 
 def open_browser():
     time.sleep(1.5)
-    webbrowser.open('http://shy.local.letmefly.xyz:4140')
+    # webbrowser.open('http://shy.local.letmefly.xyz:4140')
 
 
 def run():

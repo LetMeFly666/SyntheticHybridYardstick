@@ -2,7 +2,7 @@
  * @Author: LetMeFly
  * @Date: 2025-02-06 08:59:49
  * @LastEditors: LetMeFly.xyz
- * @LastEditTime: 2025-02-09 22:29:56
+ * @LastEditTime: 2025-02-11 13:41:25
 -->
 # SeekJudgeHybrid
 
@@ -50,3 +50,5 @@
 ## 不足
 
 + 不支持删除文件（除非手动删除`case/{md5}`整个文件夹并重启程序）
++ 多个网页端同时访问一个实时对话接口可能会导致每个接口的得到的数据都不完全
++ 设置首页案例进程“progress”接口的队列最大长度，若没有前端消费者则后端队列长度会在config.json变化时不断边长。

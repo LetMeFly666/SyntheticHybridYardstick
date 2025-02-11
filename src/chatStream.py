@@ -2,14 +2,14 @@
 Author: LetMeFly
 Date: 2025-02-09 10:18:43
 LastEditors: LetMeFly.xyz
-LastEditTime: 2025-02-09 22:26:46
+LastEditTime: 2025-02-11 13:47:23
 '''
 from flask import Flask, Response, jsonify, abort
 import threading
 from uuid import uuid4
 import time
 from collections import deque
-from typing import Dict, TypedDict
+from typing import Dict, TypedDict, Generator
 from src import file
 from src import chat
 import os
@@ -22,6 +22,7 @@ class SessionDict(TypedDict):
     complete: threading.Event
     toSend: str
     sent: str
+
 
 class Session:
     def __init__(self) -> None:
@@ -87,6 +88,11 @@ class ChatManager:
             if data == '[DONE]':
                 break
             data = json.loads(data)
+            if 'error' in data and 'message' in data['error'] and data['error']['message'] == 'concurrency exceeded':
+                print('对话失败，并发过大')  # 这就不往前端传了
+                with self.lock:
+                    self.sessions.pop(caseHash)
+                return
             thinkData = data['choices'][0]['delta'].get('reasoning_content', '')
             contentData = data['choices'][0]['delta'].get('content', '')
             if thinkData:
@@ -100,7 +106,51 @@ class ChatManager:
                     self.__addMessage(caseHash, '\n\n</div>\n\n')
                 self.__addMessage(caseHash, contentData)
         self.__completeChat(caseHash)
-            
+    
+
+    def __getChatData(self, caseHash: str) -> Generator:
+        msgDict = {
+            'code': 0,
+            'content': '',
+        }
+        notInMem = False
+        session: SessionDict
+        with self.lock:
+            if caseHash not in self.sessions:
+                notInMem = True
+            else:
+                session = self.sessions[caseHash].session
+        if notInMem:
+            print('not in mem')
+            if not os.path.exists(f'case/{caseHash}/chat/02.txt'):
+                msgDict['code'] = 2
+                msgDict['content'] = '对话未开始'
+            else:
+                with open(f'case/{caseHash}/chat/02.txt', 'r', encoding='utf-8') as f:
+                    msgDict['content'] = f.read()
+                    msgDict['code'] = 1
+            yield f'data: {json.dumps(msgDict, ensure_ascii=False)}\n\n'
+            return
+        
+        with self.lock:
+            session['sent'] += session['toSend']
+            session['toSend'] = ''
+            msgDict['content'] = session['sent']
+        yield f'data: {json.dumps(msgDict, ensure_ascii=False)}\n\n'
+
+        while not session['complete'].is_set():
+            while session['toSend']:
+                with self.lock:
+                    msgDict['content'] = session['toSend']
+                    session['sent'] += session['toSend']
+                    session['toSend'] = ''
+                yield f'data: {json.dumps(msgDict, ensure_ascii=False)}\n\n'
+            time.sleep(0.01)  # 这里就不设置竞争锁了，先实现了想优化了再说
+        msgDict['code'] = 1
+        msgDict['content'] = session['sent']
+        yield f'data: {json.dumps(msgDict, ensure_ascii=False)}\n\n'
+        return
+
     
     def createSession(self, caseHash: str) -> Response:
         with self.lock:
@@ -120,6 +170,10 @@ class ChatManager:
         fileName = config['fileName']
         data = file.read_doc_docx_txt(f'case/{caseHash}/{fileName}')
         data = '请结合相关法律对本案进行判决\n\n' + data
+
+        with open(f'case/{caseHash}/chat/01.txt', 'w', encoding='utf-8') as f:
+            f.write(data)
+        
         message = [
             {
                 "role": "user",
@@ -130,7 +184,7 @@ class ChatManager:
 
         return jsonify({
             'code': 0,
-            'msg': '创建成功'
+            'msg': '对话创建成功'
         })
 
 
@@ -141,11 +195,15 @@ class ChatManager:
                 'msg': 'case not found'
             })
         with self.lock:
-            status = f'{self.sessions[caseHash].session["status"]}'  # 复制一份儿
+            status = self.sessions[caseHash].session['status']  # 不可变字符串常量不需要拷贝
         return jsonify({
             'code': 0,
             'status': status
         })
+    
+
+    def getChatData(self, caseHash: str) -> Response:
+        return Response(self.__getChatData(caseHash), mimetype='text/event-stream')
         
 
 chatManager = ChatManager()
