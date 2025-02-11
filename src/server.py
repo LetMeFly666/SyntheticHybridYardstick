@@ -2,7 +2,7 @@
 Author: LetMeFly
 Date: 2025-02-06 21:57:39
 LastEditors: LetMeFly.xyz
-LastEditTime: 2025-02-11 11:08:14
+LastEditTime: 2025-02-11 19:42:18
 '''
 # server.py
 from flask import Flask, request, Response, jsonify, render_template_string, render_template, send_from_directory
@@ -171,14 +171,17 @@ def detail(fileHash):
     )
 
 
-@app.route('/chatStart/<string:caseHash>', methods=['POST'])
-def chatStart(caseHash):
-    return chatStream.chatManager.createSession(caseHash)
+@app.route('/chatStart', methods=['POST'])
+def chatStart():
+    data = request.get_json()
+    caseHash = data['caseHash']
+    step = data['step']
+    return chatStream.chatManager.createSession(caseHash, step)
 
 
-@app.route('/chatData/<string:caseHash>')
-def chatData(caseHash):
-    return chatStream.chatManager.getChatData(caseHash)
+@app.route('/chatData/<string:caseHash>/<int:step>')
+def chatData(caseHash, step):
+    return chatStream.chatManager.getChatData(caseHash, step)
 
 
 @app.route('/chatStatus/<string:caseHash>')

@@ -2,7 +2,7 @@
 Author: LetMeFly
 Date: 2025-02-09 10:18:43
 LastEditors: LetMeFly.xyz
-LastEditTime: 2025-02-11 13:47:23
+LastEditTime: 2025-02-11 19:44:32
 '''
 from flask import Flask, Response, jsonify, abort
 import threading
@@ -22,15 +22,17 @@ class SessionDict(TypedDict):
     complete: threading.Event
     toSend: str
     sent: str
+    step: int
 
 
 class Session:
-    def __init__(self) -> None:
+    def __init__(self, step: int) -> None:
         self.session: SessionDict = {
             'status': 'processing',
             'complete': threading.Event(),
             'toSend':'',
             'sent': '',
+            'step': step,
         }
 
 class ChatManager:
@@ -44,16 +46,23 @@ class ChatManager:
             self.sessions[chatId].session['toSend'] += content
 
 
-    def __completeChat(self, caseHash: str) -> None:
+    def __completeChat(self, caseHash: str, step: int) -> None:
+        if step == 2:
+            writeFile = '02.txt'
+            stepName = 'DS初步分析'
+        elif step == 3:
+            writeFile = '04.txt'
+            stepName = '给DS决策树并让它再次分析'
+        
         with self.lock:
             session = self.sessions[caseHash].session
             session['status'] = 'completed'
             data = session['sent'] + session['toSend']
-            with open(f'case/{caseHash}/chat/02.txt', 'w', encoding='utf-8') as f:
+            with open(f'case/{caseHash}/chat/{writeFile}', 'w', encoding='utf-8') as f:
                 f.write(data)
             config = file.read_config(f'case/{caseHash}/config.json')
-            config['progress']['now'] = 'DS初步分析'
-            config['progress']['history'].append('DS初步分析')
+            config['progress']['now'] = stepName
+            config['progress']['history'].append(stepName)
             config['modified'] = time.time()
             with open(f'case/{caseHash}/config.json', 'w', encoding='utf-8') as f:
                 f.write(json.dumps(config, ensure_ascii=False))
@@ -63,7 +72,7 @@ class ChatManager:
             self.sessions.pop(caseHash)
     
     
-    def __chat(self, caseHash: str, chatData: list) -> None:
+    def __chat(self, caseHash: str, chatData: list, step: int) -> None:
         url = "https://api.lkeap.cloud.tencent.com/v1/chat/completions"  # 腾讯云
         headers = {
             "Authorization": f"Bearer {open('password', 'r').read()}",
@@ -105,10 +114,10 @@ class ChatManager:
                     thinking = False
                     self.__addMessage(caseHash, '\n\n</div>\n\n')
                 self.__addMessage(caseHash, contentData)
-        self.__completeChat(caseHash)
+        self.__completeChat(caseHash, step)
     
 
-    def __getChatData(self, caseHash: str) -> Generator:
+    def __getChatData(self, caseHash: str, step: int) -> Generator:
         msgDict = {
             'code': 0,
             'content': '',
@@ -116,17 +125,22 @@ class ChatManager:
         notInMem = False
         session: SessionDict
         with self.lock:
-            if caseHash not in self.sessions:
+            if caseHash not in self.sessions or self.sessions[caseHash].session['step'] != step:
                 notInMem = True
             else:
                 session = self.sessions[caseHash].session
         if notInMem:
+            fileName = ''
+            if step == 2:
+                fileName = '02.txt'
+            elif step == 3:
+                fileName = '04.txt'
             print('not in mem')
-            if not os.path.exists(f'case/{caseHash}/chat/02.txt'):
+            if not os.path.exists(f'case/{caseHash}/chat/{fileName}'):
                 msgDict['code'] = 2
                 msgDict['content'] = '对话未开始'
             else:
-                with open(f'case/{caseHash}/chat/02.txt', 'r', encoding='utf-8') as f:
+                with open(f'case/{caseHash}/chat/{fileName}', 'r', encoding='utf-8') as f:
                     msgDict['content'] = f.read()
                     msgDict['code'] = 1
             yield f'data: {json.dumps(msgDict, ensure_ascii=False)}\n\n'
@@ -152,14 +166,14 @@ class ChatManager:
         return
 
     
-    def createSession(self, caseHash: str) -> Response:
+    def createSession(self, caseHash: str, step: int) -> Response:
         with self.lock:
             if caseHash in self.sessions:
                 return jsonify({
                     'code': 2,
                     'msg': '案例正在对话中'
                 })
-            self.sessions[caseHash] = Session()  # fix: 判是否存在和设置案例存在要在一个锁里
+            self.sessions[caseHash] = Session(step)  # fix: 判是否存在和设置案例存在要在一个锁里
         if not os.path.exists(f'case/{caseHash}'):
             return jsonify({
                 'code': 1,
@@ -169,18 +183,51 @@ class ChatManager:
         config = file.read_config(f'case/{caseHash}/config.json')
         fileName = config['fileName']
         data = file.read_doc_docx_txt(f'case/{caseHash}/{fileName}')
-        data = '请结合相关法律对本案进行判决\n\n' + data
 
-        with open(f'case/{caseHash}/chat/01.txt', 'w', encoding='utf-8') as f:
-            f.write(data)
+        if step == 2:
+            data = '请结合相关法律对本案进行判决\n\n' + data
+            with open(f'case/{caseHash}/chat/01.txt', 'w', encoding='utf-8') as f:
+                f.write(data)
+            message = [
+                {
+                    'role': 'user',
+                    'content': data,
+                }
+            ]
+        elif step == 3:
+            data = '请根据这个决策树进行判决：\n'+\
+                'A[是否登记结婚]-->|是|B[是否满足离婚条件?];\n' +\
+                'A-->|否|F[是否共同生活?];\n' +\
+                'B -->|否|C[不返还彩礼];\n' +\
+                'B -->|是|E[是否共同生活?];\n' +\
+                'B -->|是 |[婚前给付是否困难?];\n' +\
+                'F-->|是|G[结合彩礼实际使用、嫁妆情况、双方过错、当地习俗决定是否返还彩礼];\n' +\
+                'F-->|否|H[全部返还彩礼];\n' +\
+                'E -->|是|I[共同生活时间是否较短];\n' +\
+                'I-->|是|K[彩礼数额是否过高];\n' +\
+                'K -->|是|G;\n' +\
+                'I-->|否|C;\n' +\
+                'K -->|否|C;\n' +\
+                'J-->|是|H;\n' +\
+                'J-->|否|C;\n'
+            with open(f'case/{caseHash}/chat/03.txt', 'w', encoding='utf-8') as f:
+                f.write(data)
+            message = [
+                {
+                    'role': 'user',
+                    'content': open(f'case/{caseHash}/chat/01.txt', 'r', encoding='utf-8').read(),
+                },
+                {
+                    'role': 'assistant',
+                    'content': open(f'case/{caseHash}/chat/02.txt', 'r', encoding='utf-8').read(),
+                },
+                {
+                    'role': 'user',
+                    'content': data,
+                }
+            ]
         
-        message = [
-            {
-                "role": "user",
-                "content": data,
-            }
-        ]
-        threading.Thread(target=self.__chat, args=(caseHash, message, )).start()
+        threading.Thread(target=self.__chat, args=(caseHash, message, step, )).start()
 
         return jsonify({
             'code': 0,
@@ -202,8 +249,8 @@ class ChatManager:
         })
     
 
-    def getChatData(self, caseHash: str) -> Response:
-        return Response(self.__getChatData(caseHash), mimetype='text/event-stream')
+    def getChatData(self, caseHash: str, step: int) -> Response:
+        return Response(self.__getChatData(caseHash, step), mimetype='text/event-stream')
         
 
 chatManager = ChatManager()

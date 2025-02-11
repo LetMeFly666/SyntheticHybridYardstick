@@ -2,7 +2,7 @@
  * @Author: LetMeFly
  * @Date: 2025-02-08 17:09:53
  * @LastEditors: LetMeFly.xyz
- * @LastEditTime: 2025-02-11 13:50:34
+ * @LastEditTime: 2025-02-11 19:48:27
 -->
 <!DOCTYPE html>
 <html lang="zh-CN">
@@ -62,6 +62,17 @@
             content: '💭思考内容';
             margin-left: -15px;
         }
+
+        .inputText {
+            border: #ccc solid 1px;
+            display: block;
+        }
+
+        .inputText::before {
+            content: 'Told DeepSeek:';
+            color: black;
+            font-size: large;
+        }
     </style>
 </head>
 
@@ -86,6 +97,10 @@
             </div>
             <details name="log" id="log2">
                 <summary>步骤日志</summary>
+                <pre><code class="inputText">
+请结合相关法律对本案进行判决
+【原案例】
+                </code></pre>
                 <div name="log-content">
                     <div class="output forbidden" id="output2"></div>
                     <div class="markdown" id="markdown2"></div>
@@ -94,18 +109,58 @@
         </div>
         <div id="progress-3">
             <h3>步骤3：给DS决策树并让它再次分析(<span name="state"></span>)</h3>
-            <div name="option"></div>
+            <div name="option">
+                <button id="progress-3-start">开始分析</button>
+            </div>
+            <details name="log" id="log3">
+                <summary>步骤日志</summary>
+                <pre><code class="mermaid">
+graph LR
+    classDef startend fill:#F5EBFF,stroke:#BE8FED,stroke-width:2px
+    classDef process fill:#E5F6FF,stroke:#73A6FF,stroke-width:2px
+    A([是否登记结婚]):::startend -->|是| B{是否满足离婚条件?}:::process
+    A -->|否| F{是否共同生活?}:::process
+    B -->|否| C([不返还彩礼]):::startend
+    B -->|是| E{是否共同生活?}:::process
+    B -->|是| J{婚前给付是否困难?}:::process
+    F -->|是| G([结合彩礼 实际使用/嫁妆情况/双方过错/当地习俗 决定是否返还彩礼]):::startend
+    F -->|否| H([全部返还彩礼]):::startend
+    E -->|是| I{共同生活时间是否较短}:::process
+    I -->|是| K{彩礼数额是否过高}:::process
+    K -->|是| G
+    I -->|否| C
+    K -->|否| C
+    J -->|是| H
+    J -->|否| C
+                </code></pre>
+                <pre><code class="inputText">
+请根据这个决策树进行判决：
+A[是否登记结婚]-->|是|B[是否满足离婚条件?];
+A-->|否|F[是否共同生活?];
+B -->|否|C[不返还彩礼];
+B -->|是|E[是否共同生活?];
+B -->|是 |[婚前给付是否困难?];
+F-->|是|G[结合彩礼实际使用、嫁妆情况、双方过错、当地习俗决定是否返还彩礼];
+F-->|否|H[全部返还彩礼];
+E -->|是|I[共同生活时间是否较短];
+I-->|是|K[彩礼数额是否过高];
+K -->|是|G;
+I-->|否|C;
+K -->|否|C;
+J-->|是|H;
+J-->|否|C;</code></pre>
+                <div name="log-content">
+                    <div class="output forbidden" id="output3"></div>
+                    <div class="markdown" id="markdown3"></div>
+                </div>
+            </details>
         </div>
         <div id="progress-4">
             <h3>步骤4：纠正DS错误(<span name="state"></span>)</h3>
             <div name="option"></div>
         </div>
         <div id="progress-5">
-            <h3>步骤5：错误纠正对话(<span name="state"></span>)</h3>
-            <div name="option"></div>
-        </div>
-        <div id="progress-6">
-            <h3>步骤6：生成使用决策树前后的结果对比表(<span name="state"></span>)</h3>
+            <h3>步骤5：生成使用决策树前后的结果对比表(<span name="state"></span>)</h3>
             <div name="option"></div>
         </div>
     </div>
@@ -115,14 +170,16 @@
         }
 
         let eventSource2;
-        let alreadyEnd = true;  // 防止本来就对话结束导致的重复渲染
-        function showLog2() {
-            if (eventSource2) {
-                eventSource2.close();
+        let alreadyEnd2 = true;  // 防止本来就对话结束导致的重复渲染
+        let eventSource3;
+        let alreadyEnd3 = true;  // 防止本来就对话结束导致的重复渲染
+        function showLog_baseFor2345(eventSource2345, outputSelector, alreadyEnd, step) {
+            if (eventSource2345) {
+                eventSource2345.close();
             }
-            const eventSource = new EventSource(`/chatData/${caseHash}`);
-            eventSource2 = eventSource;
-            const output = document.querySelector('#progress-2 [name=log] .output');
+            const eventSource = new EventSource(`/chatData/${caseHash}/${step}`);
+            eventSource2345 = eventSource;
+            const output = document.querySelector(outputSelector);
             var responseText = '';
             eventSource.onmessage = () => {
                 const data = JSON.parse(event.data);
@@ -149,8 +206,13 @@
             }
         }
 
-        function showLog3() {
+        
+        function showLog2() {
+            showLog_baseFor2345(eventSource2, '#progress-2 [name=log] .output', alreadyEnd2, 2);
+        }
 
+        function showLog3() {
+            showLog_baseFor2345(eventSource3, '#progress-3 [name=log] .output', alreadyEnd3, 3);
         }
 
         function showLog4() {
@@ -219,11 +281,19 @@
         };
 
         const progress_2_start = document.querySelector('#progress-2-start');
-        progress_2_start.onclick = async () => {
+        const progress_3_start = document.querySelector('#progress-3-start');
+        async function start1chat(step) {
             // progress_2_start.disabled = true;
-            document.querySelector('#log2').setAttribute('open', '');
-            fetch(`/chatStart/${caseHash}`, {
+            document.querySelector(`#log${step}`).setAttribute('open', '');
+            fetch(`/chatStart`, {
                 method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',  // 这个是必须的，否则flask无法解析
+                },
+                body: JSON.stringify({
+                    'caseHash': caseHash,
+                    'step': step
+                }),
             }).then(response => {
                 if (response.ok) {
                     return response.json();
@@ -233,19 +303,22 @@
             }).then(result => {
                 console.log(result);
                 alert(result['msg']);
-                showLog2();
+                showLogFunctions[step - 1]();
             }).catch(error => {
                 alert('请求失败' + error);
             });
         };
+
+        progress_2_start.onclick = () => {start1chat(2);};
+        progress_3_start.onclick = () => {start1chat(3);};
     </script>
 
     <script name="markdownRender">
         // 配置观察选项
         const config = {
-            childList: true, // 观察子节点的变化
-            subtree: true,   // 观察所有后代节点
-            characterData: true // 观察文本内容的变化
+            childList: true,     // 观察子节点的变化
+            subtree: true,       // 观察所有后代节点
+            characterData: true  // 观察文本内容的变化
         };
 
         // markdown渲染2 - 这里先堆点shiShan代码好了
@@ -270,6 +343,52 @@
         // 开始观察目标节点
         observer2.observe(output2, config);
 
+        // markdown渲染3 - 开堆
+        const output3 = document.getElementById('output3');
+        const markdown3 = document.getElementById('markdown3');
+        function renderMarkdown3() {
+            const inputText = output3.innerHTML;
+            const renderedHtml = marked.parse(inputText);
+            markdown3.innerHTML = renderedHtml;
+        }
+        const onOutputModified3 = function (mutationsList, observer) {
+            for (let mutation of mutationsList) {
+                if (mutation.type === 'childList' || mutation.type === 'characterData') {
+                    // 调用 renderMarkdown 函数
+                    renderMarkdown3();
+                }
+            }
+        };
+        const observer3 = new MutationObserver(onOutputModified3);
+        observer3.observe(output3, config);
+
+    </script>
+
+    <script name="renderMermaid">
+        function renderMermaid() {
+            // 创建 script 元素
+            const script = document.createElement('script');
+            // 设置脚本的 src 属性
+            script.src = 'https://letmefly.xyz/Links/mermaid.min.js';
+            // 监听脚本的 load 事件
+            script.onload = function () {
+                // 脚本加载完成后，初始化 Mermaid 并渲染图表
+                mermaid.initialize({ startOnLoad: false });
+                mermaid.run({
+                    querySelector: '.mermaid'
+                });
+            };
+            // 监听脚本的 error 事件，处理加载失败的情况
+            script.onerror = function () {
+                console.error('Mermaid 脚本加载失败');
+            };
+            // 将脚本添加到文档的 head 中
+            document.head.appendChild(script);
+        }
+
+        setTimeout(() => {
+            renderMermaid();
+        }, 10);
     </script>
 
     <script>
