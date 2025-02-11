@@ -2,7 +2,7 @@
 Author: LetMeFly
 Date: 2025-02-06 21:57:39
 LastEditors: LetMeFly.xyz
-LastEditTime: 2025-02-11 19:42:18
+LastEditTime: 2025-02-11 22:01:09
 '''
 # server.py
 from flask import Flask, request, Response, jsonify, render_template_string, render_template, send_from_directory
@@ -187,6 +187,17 @@ def chatData(caseHash, step):
 @app.route('/chatStatus/<string:caseHash>')
 def chatStatus(caseHash):
     return chatStream.chatManager.getStatus(caseHash)
+
+
+@app.route('/chatNoNeed4/<string:caseHash>', methods=['POST'])  # 这里还先继承之前的格式，不将hash放到body里了
+def chatNoNeed4(caseHash):
+    return chatStream.chatManager.noNeed4(caseHash)
+
+
+@app.route('/chatIfHad4/<string:caseHash>')
+def chatIfHad4(caseHash):
+    return chatStream.chatManager.ifhad4(caseHash)
+
 
 def run_flask():
     app.run(host='shy.local.letmefly.xyz', port=4140, debug=False)

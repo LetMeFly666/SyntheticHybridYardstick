@@ -1,0 +1,1 @@
+{"model": "deepseek-r1", "messages": [{"role": "user", "content": "fetch是异步的吗？如何等到fetch的结果再执行后续函数？"}], "stream": true}

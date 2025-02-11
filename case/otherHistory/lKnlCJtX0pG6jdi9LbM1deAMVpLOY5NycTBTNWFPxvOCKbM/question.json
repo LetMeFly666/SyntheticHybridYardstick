@@ -1,0 +1,1 @@
+{"model": "deepseek-r1", "messages": [{"role": "user", "content": "HTML列表，可以选“A”“B”“C”三个选项，还有一个按钮。 有一个div，其中内容根据ABC的选择而实时变化"}], "stream": true}

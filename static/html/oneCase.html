@@ -2,7 +2,7 @@
  * @Author: LetMeFly
  * @Date: 2025-02-08 17:09:53
  * @LastEditors: LetMeFly.xyz
- * @LastEditTime: 2025-02-11 19:48:27
+ * @LastEditTime: 2025-02-11 22:42:06
 -->
 <!DOCTYPE html>
 <html lang="zh-CN">
@@ -157,7 +157,19 @@ J-->|否|C;</code></pre>
         </div>
         <div id="progress-4">
             <h3>步骤4：纠正DS错误(<span name="state"></span>)</h3>
-            <div name="option"></div>
+            <div name="option">
+                <div>上一步判断结果是否需要修改？</div>
+                <select id="optionSelect4">
+                    <option value="">请选择</option>
+                    <option value="A">无需更改</option>
+                    <option value="B">原案件中的婚姻登记状况错误，请将婚姻登记更改成相反的状况（即已登记改为未登记，未登记改为已登记），并根据修改后的案件情况进行重新判决</option>
+                </select>
+                <button id="button4" class="forbidden">确认</button>
+            </div>
+            <details name="log" id="log4">
+                <summary>步骤日志</summary>
+                <div id="input4"></div>
+            </details>
         </div>
         <div id="progress-5">
             <h3>步骤5：生成使用决策树前后的结果对比表(<span name="state"></span>)</h3>
@@ -189,7 +201,11 @@ J-->|否|C;</code></pre>
                     eventSource.close();
                     if (!alreadyEnd) {
                         alert('对话结束');
-                        renderProgress();  // 重新渲染对话状态
+                        // nowStep = nextStep();
+                        // renderProgress();  // 重新渲染对话状态
+                        setTimeout(() => {
+                            location.reload();
+                        }, 1500);
                     }
                     return;
                 }
@@ -215,8 +231,22 @@ J-->|否|C;</code></pre>
             showLog_baseFor2345(eventSource3, '#progress-3 [name=log] .output', alreadyEnd3, 3);
         }
 
-        function showLog4() {
-
+        async function showLog4() {
+            const response = await fetch(`/chatIfHad4/${caseHash}`);
+            const data = await response.json();
+            const optionSelect4 = document.getElementById('optionSelect4');
+            if (data['code'] == 0) {
+                optionSelect4.value = 'B';  // 进行了更改
+                optionSelect4.classList.add('forbidden');
+            } else if (data['code'] == 2) {  // 暂未选择
+                optionSelect4.value = '';
+            } else {  // 1
+                optionSelect4.value = 'A';  // 无需更改，跳过step4
+                optionSelect4.classList.add('forbidden');
+            }
+            responseSelect4();
+            // nextStep();
+            // renderProgress();
         }
 
         function showLog5() {
@@ -241,7 +271,16 @@ J-->|否|C;</code></pre>
             showLog4,  // step4
             showLog5,  // step5
         ];
-        const nowStep = '{{ progress_now }}';
+        var nowStep = '{{ progress_now }}';
+
+        // function nextStep() {
+        //     for (var i = 0; i < stepList.length; i++) {
+        //         if (stepList[i] === nowStep) {
+        //             nowStep = stepList[i + 1];
+        //             return;
+        //         }
+        //     }
+        // }
 
         function renderProgress() {
             const progressDiv = document.getElementById('progress');
@@ -311,6 +350,54 @@ J-->|否|C;</code></pre>
 
         progress_2_start.onclick = () => {start1chat(2);};
         progress_3_start.onclick = () => {start1chat(3);};
+
+        const optionSelect4 = document.getElementById('optionSelect4');
+        const input4 = document.getElementById('input4');
+        const button4 = document.getElementById('button4');
+        optionSelect4.addEventListener('change', responseSelect4);
+
+        function responseSelect4() {
+            const selectedValue = optionSelect4.value;
+            if (selectedValue === 'A') {
+                input4.innerText = '【无需更改，可直接执行下一步】';
+                input4.classList.remove('inputText');
+                button4.classList.remove('forbidden');
+                button4.onclick = noNeed4;
+            } else if (selectedValue === 'B') {
+                input4.innerText = '原案件中的婚姻登记状况错误，请将婚姻登记更改成相反的状况（即已登记改为未登记，未登记改为已登记），并根据修改后的案件情况进行重新判决';
+                input4.classList.add('inputText');
+                button4.classList.remove('forbidden');
+                button4.onclick = need4;
+            } else {
+                input4.innerText = '请做出有效选择。';
+                input4.classList.remove('inputText');
+                button4.classList.add('forbidden');
+            }
+        }
+
+        function noNeed4() {
+            fetch(`/chatNoNeed4/${caseHash}`, {
+                method: 'POST',
+            }).then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error(`，状态码: ${response.status}`);
+                }
+            }).then(result => {
+                alert(result['msg']);
+                setTimeout(() => {
+                    location.reload();  // 简单粗暴
+                }, 1500);
+            }).catch(error => {
+                alert('请求失败' + error);
+            });
+            document.querySelector('#log4').setAttribute('open', '');
+        }
+
+        function need4() {
+
+        }
     </script>
 
     <script name="markdownRender">

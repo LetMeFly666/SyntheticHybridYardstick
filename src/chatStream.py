@@ -2,7 +2,7 @@
 Author: LetMeFly
 Date: 2025-02-09 10:18:43
 LastEditors: LetMeFly.xyz
-LastEditTime: 2025-02-11 19:44:32
+LastEditTime: 2025-02-11 22:14:45
 '''
 from flask import Flask, Response, jsonify, abort
 import threading
@@ -251,7 +251,39 @@ class ChatManager:
 
     def getChatData(self, caseHash: str, step: int) -> Response:
         return Response(self.__getChatData(caseHash, step), mimetype='text/event-stream')
-        
+    
+
+    "不需要第4步的修改"
+    def noNeed4(self, caseHash: str) -> Response:
+        config = file.read_config(f'case/{caseHash}/config.json')
+        config['progress']['now'] = '纠正DS错误'
+        config['progress']['history'].append('纠正DS错误')
+        config['progress']['step4'] = 'skip'
+        config['modified'] = time.time()
+        with open(f'case/{caseHash}/config.json', 'w', encoding='utf-8') as f:
+            f.write(json.dumps(config, ensure_ascii=False))
+        return jsonify({
+            'code': 0,
+            'msg': '第4步已跳过',
+        })
+    
+
+    def ifhad4(self, caseHash: str) -> Response:
+        if os.path.exists(f'case/{caseHash}/chat/05.txt'):
+            return jsonify({
+                'code': 0,
+                'msg': '进行过step4'
+            })
+        config = file.read_config(f'case/{caseHash}/config.json')
+        if config['progress'].get('step4', '') == 'skip':
+            return jsonify({
+                'code': 1,
+                'msg': '跳过step4'
+            })
+        return jsonify({
+            'code': 2,
+            'msg': '未进行过step4'
+        })
 
 chatManager = ChatManager()
 
