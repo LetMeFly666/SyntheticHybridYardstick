@@ -2,7 +2,7 @@
  * @Author: LetMeFly
  * @Date: 2025-02-06 08:59:49
  * @LastEditors: LetMeFly.xyz
- * @LastEditTime: 2025-02-12 15:53:18
+ * @LastEditTime: 2025-02-12 16:32:35
 -->
 # SyntheticHybridYardstick(SHY) - 综合决策树与API的评估标尺
 
@@ -13,6 +13,17 @@
 + Y = Yardstick（评估基准）
 
 ## 流程
+
+```mermaid
+graph LR
+    classDef process fill:#E5F6FF,stroke:#73A6FF,stroke-width:2px;
+    A(上传案例文件):::process --> B(DS初步分析):::process
+    B --> C(给DS决策树并让它再次分析):::process
+    C --> D{纠正DS错误}:::process
+    D --> |是| E(错误纠正对话):::process
+    D --> |否| F(生成使用决策树前后的结果对比表):::process
+    E --> F
+```
 
 ### 总述
 
