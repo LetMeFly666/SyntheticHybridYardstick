@@ -2,7 +2,7 @@
  * @Author: LetMeFly
  * @Date: 2025-02-08 17:09:53
  * @LastEditors: LetMeFly.xyz
- * @LastEditTime: 2025-02-12 15:01:55
+ * @LastEditTime: 2025-02-12 15:17:07
 -->
 <!DOCTYPE html>
 <html lang="zh-CN">
@@ -156,7 +156,7 @@ J-->|否|C;</code></pre>
             </details>
         </div>
         <div id="progress-4">
-            <h3>步骤4：纠正DS错误(<span name="state"></span>)</h3>
+            <h3>步骤4：纠正DS错误(<span name="state" id="state4"></span>)</h3>
             <div name="option">
                 <div>上一步判断结果是否需要修改？</div>
                 <select id="optionSelect4">
@@ -262,6 +262,7 @@ J-->|否|C;</code></pre>
             } else {  // 1
                 optionSelect4.value = 'A';  // 无需更改，跳过step4
                 optionSelect4.classList.add('forbidden');
+                document.querySelector('#state4').innerHTML = '已跳过';
             }
             responseSelect4();
             // nextStep();
