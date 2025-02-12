@@ -2,83 +2,229 @@
  * @Author: LetMeFly
  * @Date: 2025-02-08 17:09:53
  * @LastEditors: LetMeFly.xyz
- * @LastEditTime: 2025-02-12 15:17:07
+ * @LastEditTime: 2025-02-12 16:19:37
 -->
 <!DOCTYPE html>
 <html lang="zh-CN">
 
 <head>
     <meta charset="UTF-8">
-    <title>案例 - {{ fileName }}</title>
+    <title>LetSHY - 案例 - {{ fileName }}</title>
     <script src="https://letmefly.xyz/Links/Common.js" async></script>
     <script src="/static/js/marked.min.js"></script>
     <style>
-        .forbidden {
-            display: none;
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f8fa;
+            color: #333;
+        }
+
+        h1,
+        h2,
+        h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        h3 {
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+
+        #header {
+            margin-bottom: 30px;
+        }
+
+        #header button {
+            background-color: #3498db;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        #header button:hover {
+            background-color: #2980b9;
+        }
+
+        .status-tags .badge {
+            background-color: #e1f5fe;
+            color: #0277bd;
+            padding: 5px 10px;
+            border-radius: 12px;
+            font-size: 0.9em;
+        }
+
+        #progress>div {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        #progress h3 {
+            color: #3498db;
+            margin-bottom: 15px;
+        }
+
+        #progress button,
+        #backToMainPage {
+            background-color: #3498db;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        #progress button:hover {
+            background-color: #2980b9;
+        }
+
+        details {
+            margin-top: 15px;
         }
 
         details[open] {
             border: 1px solid #ccc;
-            /* 边框样式 */
             border-radius: 4px;
-            /* 圆角效果 */
             padding: 10px;
-            /* 内边距 */
             margin: 5px 0;
-            /* 外边距 */
         }
 
-        /* 可选：自定义summary的样式 */
         summary {
             cursor: pointer;
             padding: 4px;
             list-style: none;
-            /* 去除默认三角符号 */
-        }
-
-        /* 自定义三角图标 */
-        summary::marker {
-            display: none;
+            font-weight: 500;
+            color: #2c3e50;
         }
 
         summary::before {
             content: "👉";
-            /* 闭合时显示👉 */
             padding-right: 6px;
         }
 
         details[open] summary::before {
             content: "👇";
-            /* 展开时显示👇 */
         }
 
-        .thinkTag {
-            color: gray;
-            border-left: #ccc solid 1px;
-            padding-left: 10px;
-        }
-
-        .thinkTag::before {
-            content: '💭思考内容';
-            margin-left: -15px;
+        pre {
+            background-color: #f8f9fa;
+            border: 1px solid #e1e4e8;
+            border-radius: 6px;
+            padding: 15px;
+            overflow-x: auto;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9em;
         }
 
         .inputText {
-            border: #ccc solid 1px;
-            display: block;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin: 10px 0;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9em;
         }
 
         .inputText::before {
             content: 'Told DeepSeek:';
             color: black;
             font-size: large;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .thinkTag {
+            color: gray;
+            border-left: 1px solid #ccc;
+            padding-left: 10px;
+            margin: 10px 0;
+            font-style: italic;
+        }
+
+        .thinkTag::before {
+            content: '💭思考内容';
+            margin-left: -15px;
+            font-weight: bold;
+        }
+
+        .output {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9em;
+        }
+
+        .markdown {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+
+        select {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin: 10px 0;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .forbidden {
+            display: none;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+
+            #progress>div {
+                padding: 15px;
+            }
+
+            pre,
+            .inputText,
+            .output,
+            .markdown {
+                font-size: 0.85em;
+            }
         }
     </style>
 </head>
 
 <body>
+    <h1>LetSHY - 案例 - {{ fileName }}</h1>
     <div name="header">
         <button id="backToMainPage">回到主页</button>
+        <h2>流程说明</h2>
+        <pre><code class="mermaid">
+            graph LR
+                classDef process fill:#E5F6FF,stroke:#73A6FF,stroke-width:2px;
+            
+                A(上传案例文件):::process --> B(DS初步分析):::process
+                B --> C(给DS决策树并让它再次分析):::process
+                C --> D{纠正DS错误}:::process
+                D --> |是| E(错误纠正对话):::process
+                D --> |否| F(生成使用决策树前后的结果对比表):::process
+                E --> F
+        </code></pre>
         <h3>案例名称：{{ fileName }}</h3>
         <div class="status-tags">
             <span class="badge">分析阶段：{{ progress_now }}</span>
@@ -240,7 +386,7 @@ J-->|否|C;</code></pre>
             }
         }
 
-        
+
         function showLog2() {
             showLog_baseFor2345(eventSource2, '#progress-2 [name=log] .output', alreadyEnd2, 2);
         }
@@ -368,8 +514,8 @@ J-->|否|C;</code></pre>
             });
         };
 
-        progress_2_start.onclick = () => {start1chat(2);};
-        progress_3_start.onclick = () => {start1chat(3);};
+        progress_2_start.onclick = () => { start1chat(2); };
+        progress_3_start.onclick = () => { start1chat(3); };
 
         const optionSelect4 = document.getElementById('optionSelect4');
         const input4 = document.getElementById('input4');
@@ -420,7 +566,7 @@ J-->|否|C;</code></pre>
         }
 
         const progress_5_start = document.querySelector('#progress-5-start');
-        progress_5_start.onclick = () => {start1chat(5);};
+        progress_5_start.onclick = () => { start1chat(5); };
     </script>
 
     <script name="markdownRender">

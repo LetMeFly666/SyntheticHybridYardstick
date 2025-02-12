@@ -2,26 +2,149 @@
  * @Author: LetMeFly
  * @Date: 2025-02-08 13:39:40
  * @LastEditors: LetMeFly.xyz
- * @LastEditTime: 2025-02-10 14:10:22
+ * @LastEditTime: 2025-02-12 16:15:01
 -->
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
     <meta charset="UTF-8">
-    <title>文件上传与对话进度</title>
+    <title>LetSHY - 进度总管理</title>
     <script src="https://letmefly.xyz/Links/Common.js" async></script>
     <style>
-        #fileList .file-item a.fileName {
-            display: inline-block;
-            width: 350px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f8fa;
+            color: #333;
+        }
+
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            color: #3498db;
+            margin: 25px 0 15px;
+        }
+
+        #uploadForm {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        input[type="file"] {
+            padding: 8px;
+            border: 2px solid #3498db;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+
+        button {
+            background-color: #3498db;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        #fileList {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            list-style-type: none;
+        }
+
+        .file-item {
+            padding: 15px;
+            margin: 10px 0;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: transform 0.2s;
+        }
+
+        .file-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .fileName {
+            color: #2c3e50;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .fileName:hover {
+            color: #3498db;
+        }
+
+        pre {
+            background-color: #f8f9fa;
+            border: 1px solid #e1e4e8;
+            border-radius: 6px;
+            padding: 20px;
+            overflow-x: auto;
+        }
+
+        .endbutton {
+            margin-top: 20px;
+            font-size: 1.1em;
+            padding: 12px 25px;
+            float: right;
+        }
+
+        /* 进度文字样式 */
+        .file-item span {
+            color: #7f8c8d;
+            font-size: 0.9em;
+            font-style: italic;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+
+            .file-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .fileName {
+                width: 100%;
+                margin-bottom: 8px;
+            }
+        }
+
+        #fileList li {
+            cursor: pointer;
         }
     </style>
 </head>
+
 <body>
-    <h1>文件上传与对话进度</h1>
+    <h1>LetSHY - 进度总管理</h1>
 
     <!-- 流程说明 -->
     <h2>流程说明</h2>
@@ -53,7 +176,8 @@
         </li> -->
     </ul>
 
-    <button id="singleChat">单次对话</button>
+    <button id="singleChat" class="endbutton">单次对话</button>
+    <button onclick="window.open('https://shy-ds.letmefly.xyz/', '_blank')" class="endbutton">使用说明</button>
 
     <script name="文件上传">
         // 文件上传逻辑
@@ -113,6 +237,9 @@
                 li.setAttribute('class', 'file-item');
                 fileList.appendChild(li);
             }
+            document.getElementById(`file-${data.md5}`).addEventListener('click', () => {
+                location.href = `/detail/${data.md5}`;
+            })
         }
 
         function renderFiles(data) {
@@ -168,4 +295,5 @@
         };
     </script>
 </body>
+
 </html>

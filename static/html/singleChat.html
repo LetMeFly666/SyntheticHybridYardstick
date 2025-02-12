@@ -2,7 +2,7 @@
  * @Author: LetMeFly
  * @Date: 2025-02-07 22:01:23
  * @LastEditors: LetMeFly.xyz
- * @LastEditTime: 2025-02-11 12:16:48
+ * @LastEditTime: 2025-02-12 16:28:26
 -->
 <!DOCTYPE html>
 <html>
@@ -14,11 +14,98 @@
     <script src="/static/js/marked.min.js"></script>
     <style>
         .thinkTag {
-            color: #999;
+            color: #7f8c8d;
+            background-color: #f8f9fa;
             font-style: italic;
-            margin-bottom: 10px;
-            margin-top: 10px;
-            border: #999 solid 1px;
+            margin: 15px 0;
+            padding: 12px;
+            border: 1px solid #e1e4e8;
+            border-radius: 6px;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 20px;
+            background-color: #f5f8fa;
+            color: #333;
+        }
+
+        h2 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+            margin: 30px 0;
+        }
+
+        div:has(> #input) {
+            display: flex;
+            gap: 10px;
+            margin: 25px 0;
+        }
+
+        input[type="text"] {
+            flex-grow: 1;
+            padding: 12px;
+            border: 2px solid #3498db;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: #3498db;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        button:nth-child(2) {
+            background-color: #e74c3c;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        button:nth-child(2):hover {
+            background-color: #c0392b;
+        }
+
+        #output,
+        #markdown {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+            font-size: 16px;
+        }
+
+
+
+        pre {
+            background-color: #f8f9fa;
+            border: 1px solid #e1e4e8;
+            border-radius: 6px;
+            padding: 20px;
+            overflow-x: auto;
+        }
+
+        @media (max-width: 768px) {
+            div:has(> #input) {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+                padding: 14px;
+            }
         }
     </style>
 </head>
