@@ -2,7 +2,7 @@
 Author: LetMeFly
 Date: 2025-02-09 10:18:43
 LastEditors: LetMeFly.xyz
-LastEditTime: 2025-02-11 22:14:45
+LastEditTime: 2025-02-12 14:22:45
 '''
 from flask import Flask, Response, jsonify, abort
 import threading
@@ -53,6 +53,9 @@ class ChatManager:
         elif step == 3:
             writeFile = '04.txt'
             stepName = '给DS决策树并让它再次分析'
+        elif step == 4:
+            writeFile = '06.txt'
+            stepName = '纠正DS错误'
         
         with self.lock:
             session = self.sessions[caseHash].session
@@ -135,6 +138,8 @@ class ChatManager:
                 fileName = '02.txt'
             elif step == 3:
                 fileName = '04.txt'
+            elif step == 4:
+                fileName = '06.txt'
             print('not in mem')
             if not os.path.exists(f'case/{caseHash}/chat/{fileName}'):
                 msgDict['code'] = 2
@@ -226,6 +231,32 @@ class ChatManager:
                     'content': data,
                 }
             ]
+        elif step == 4:
+            data = '原案件中的婚姻登记状况错误，请将婚姻登记更改成相反的状况（即已登记改为未登记，未登记改为已登记），并根据修改后的案件情况进行重新判决'
+            with open(f'case/{caseHash}/chat/05.txt', 'w', encoding='utf-8') as f:
+                f.write(data)
+            message = [
+                {
+                    'role': 'user',
+                    'content': open(f'case/{caseHash}/chat/01.txt', 'r', encoding='utf-8').read(),
+                },
+                {
+                    'role': 'assistant',
+                    'content': open(f'case/{caseHash}/chat/02.txt', 'r', encoding='utf-8').read(),
+                },
+                {
+                    'role': 'user',
+                    'content': open(f'case/{caseHash}/chat/03.txt', 'r', encoding='utf-8').read(),
+                },
+                {
+                    'role': 'assistant',
+                    'content': open(f'case/{caseHash}/chat/04.txt', 'r', encoding='utf-8').read(),
+                },
+                {
+                    'role': 'user',
+                    'content': data
+                },
+            ]
         
         threading.Thread(target=self.__chat, args=(caseHash, message, step, )).start()
 
@@ -269,11 +300,17 @@ class ChatManager:
     
 
     def ifhad4(self, caseHash: str) -> Response:
-        if os.path.exists(f'case/{caseHash}/chat/05.txt'):
+        if os.path.exists(f'case/{caseHash}/chat/06.txt'):
             return jsonify({
                 'code': 0,
                 'msg': '进行过step4'
             })
+        with self.lock:
+            if caseHash in self.sessions and self.sessions[caseHash].session['step'] == 4:
+                return jsonify({
+                    'code': 0,
+                    'msg': '正在进行step4'
+                })
         config = file.read_config(f'case/{caseHash}/config.json')
         if config['progress'].get('step4', '') == 'skip':
             return jsonify({

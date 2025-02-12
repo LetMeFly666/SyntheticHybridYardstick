@@ -2,11 +2,15 @@
  * @Author: LetMeFly
  * @Date: 2025-02-06 08:59:49
  * @LastEditors: LetMeFly.xyz
- * @LastEditTime: 2025-02-11 13:41:25
+ * @LastEditTime: 2025-02-12 11:06:21
 -->
-# SeekJudgeHybrid
+# SyntheticHybridYardstick(SHY) - 综合决策树与API的评估标尺
 
 让DeepSeek(以下可能简称DS)分别不依据和依据决策树判决一个案例并对比判决结果生成表格
+
++ S = Synthetic（综合智能）
++ H = Hybrid（混合方法）
++ Y = Yardstick（评估基准）
 
 ## 流程
 

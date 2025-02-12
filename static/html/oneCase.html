@@ -2,7 +2,7 @@
  * @Author: LetMeFly
  * @Date: 2025-02-08 17:09:53
  * @LastEditors: LetMeFly.xyz
- * @LastEditTime: 2025-02-11 22:42:06
+ * @LastEditTime: 2025-02-12 14:18:02
 -->
 <!DOCTYPE html>
 <html lang="zh-CN">
@@ -164,11 +164,13 @@ J-->|否|C;</code></pre>
                     <option value="A">无需更改</option>
                     <option value="B">原案件中的婚姻登记状况错误，请将婚姻登记更改成相反的状况（即已登记改为未登记，未登记改为已登记），并根据修改后的案件情况进行重新判决</option>
                 </select>
-                <button id="button4" class="forbidden">确认</button>
+                <div><button id="button4" class="forbidden">确认</button></div>
             </div>
             <details name="log" id="log4">
                 <summary>步骤日志</summary>
                 <div id="input4"></div>
+                <div class="output forbidden" id="output4"></div>
+                <div class="markdown" id="markdown4"></div>
             </details>
         </div>
         <div id="progress-5">
@@ -185,6 +187,8 @@ J-->|否|C;</code></pre>
         let alreadyEnd2 = true;  // 防止本来就对话结束导致的重复渲染
         let eventSource3;
         let alreadyEnd3 = true;  // 防止本来就对话结束导致的重复渲染
+        let eventSource4;
+        let alreadyEnd4 = true;  // 防止本来就对话结束导致的重复渲染
         function showLog_baseFor2345(eventSource2345, outputSelector, alreadyEnd, step) {
             if (eventSource2345) {
                 eventSource2345.close();
@@ -238,6 +242,7 @@ J-->|否|C;</code></pre>
             if (data['code'] == 0) {
                 optionSelect4.value = 'B';  // 进行了更改
                 optionSelect4.classList.add('forbidden');
+                showLog_baseFor2345(eventSource4, '#progress-4 [name=log] .output', alreadyEnd4, 4);
             } else if (data['code'] == 2) {  // 暂未选择
                 optionSelect4.value = '';
             } else {  // 1
@@ -396,7 +401,7 @@ J-->|否|C;</code></pre>
         }
 
         function need4() {
-
+            start1chat(4);
         }
     </script>
 
@@ -448,6 +453,25 @@ J-->|否|C;</code></pre>
         };
         const observer3 = new MutationObserver(onOutputModified3);
         observer3.observe(output3, config);
+
+        // markdown渲染4 - 再堆（待会儿还得一次）
+        const output4 = document.getElementById('output4');
+        const markdown4 = document.getElementById('markdown4');
+        function renderMarkdown4() {
+            const inputText = output4.innerHTML;
+            const renderedHtml = marked.parse(inputText);
+            markdown4.innerHTML = renderedHtml;
+        }
+        const onOutputModified4 = function (mutationsList, observer) {
+            for (let mutation of mutationsList) {
+                if (mutation.type === 'childList' || mutation.type === 'characterData') {
+                    // 调用 renderMarkdown 函数
+                    renderMarkdown4();
+                }
+            }
+        };
+        const observer4 = new MutationObserver(onOutputModified4);
+        observer4.observe(output4, config);
 
     </script>
 
