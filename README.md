@@ -2,7 +2,7 @@
  * @Author: LetMeFly
  * @Date: 2025-02-06 08:59:49
  * @LastEditors: LetMeFly.xyz
- * @LastEditTime: 2025-02-12 16:53:11
+ * @LastEditTime: 2025-02-12 17:48:30
 -->
 # SyntheticHybridYardstick(SHY) - 综合决策树与API的评估标尺
 
@@ -50,6 +50,7 @@ graph LR
     pip install requests
     pip install flask
     pip install watchdog
+    pip install pytz
     ```
 
     如果你只上传`.txt`格式的案例（最好utf-8编码），那么你可以**跳过这一步**了。
@@ -87,6 +88,10 @@ graph LR
     ```
 
     之后你就可以上传案例，进行分析并统筹分析进度了。
+
+### 演示视频
+
+[SyntheticHybridYardstick.demo.flv](https://github.com/LetMeFly666/SyntheticHybridYardstick/releases/download/v1.0/SyntheticHybridYardstick.demo.flv)
 
 ## 特色不足
 

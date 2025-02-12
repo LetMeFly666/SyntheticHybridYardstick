@@ -2,9 +2,8 @@
 Author: LetMeFly
 Date: 2025-02-09 10:33:13
 LastEditors: LetMeFly.xyz
-LastEditTime: 2025-02-09 21:45:02
+LastEditTime: 2025-02-12 17:17:30
 '''
-import pypandoc
 import json
 import platform
 import os
@@ -24,6 +23,7 @@ def read_docx(filePath: str) -> str:
         f.close()
         print(f'临时文件路径：{tempFilePath}')
         shutil.copyfile(filePath, tempFilePath)
+        import pypandoc
         text = pypandoc.convert_file(tempFilePath, 'plain')
     if os.path.exists(tempFilePath):
         try:
