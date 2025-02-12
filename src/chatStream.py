@@ -2,7 +2,7 @@
 Author: LetMeFly
 Date: 2025-02-09 10:18:43
 LastEditors: LetMeFly.xyz
-LastEditTime: 2025-02-12 14:22:45
+LastEditTime: 2025-02-12 15:01:21
 '''
 from flask import Flask, Response, jsonify, abort
 import threading
@@ -56,6 +56,9 @@ class ChatManager:
         elif step == 4:
             writeFile = '06.txt'
             stepName = '纠正DS错误'
+        elif step == 5:
+            writeFile = '08.txt'
+            stepName = '生成使用决策树前后的结果对比表'
         
         with self.lock:
             session = self.sessions[caseHash].session
@@ -140,6 +143,8 @@ class ChatManager:
                 fileName = '04.txt'
             elif step == 4:
                 fileName = '06.txt'
+            elif step == 5:
+                fileName = '08.txt'
             print('not in mem')
             if not os.path.exists(f'case/{caseHash}/chat/{fileName}'):
                 msgDict['code'] = 2
@@ -255,6 +260,45 @@ class ChatManager:
                 {
                     'role': 'user',
                     'content': data
+                },
+            ]
+        elif step == 5:
+            data = '请从是否登记结婚、判决依据、彩礼返还比例、诉讼费用分担四个方面对比以上判决'
+            with open(f'case/{caseHash}/chat/07.txt', 'w', encoding='utf-8') as f:
+                f.write(data)
+            message = [
+                {
+                    'role': 'user',
+                    'content': open(f'case/{caseHash}/chat/01.txt', 'r', encoding='utf-8').read(),
+                },
+                {
+                    'role': 'assistant',
+                    'content': open(f'case/{caseHash}/chat/02.txt', 'r', encoding='utf-8').read(),
+                },
+                {
+                    'role': 'user',
+                    'content': open(f'case/{caseHash}/chat/03.txt', 'r', encoding='utf-8').read(),
+                },
+                {
+                    'role': 'assistant',
+                    'content': open(f'case/{caseHash}/chat/04.txt', 'r', encoding='utf-8').read(),
+                },
+            ]
+            if config['progress'].get('step4', '') != 'skip':
+                message += [
+                    {
+                        'role': 'user',
+                        'content': open(f'case/{caseHash}/chat/05.txt', 'r', encoding='utf-8').read(),
+                    },
+                    {
+                        'role': 'assistant',
+                        'content': open(f'case/{caseHash}/chat/06.txt', 'r', encoding='utf-8').read(),
+                    },
+                ]
+            message += [
+                {
+                    'role': 'user',
+                    'content': data,
                 },
             ]
         

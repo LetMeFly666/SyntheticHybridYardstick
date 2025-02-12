@@ -2,7 +2,7 @@
  * @Author: LetMeFly
  * @Date: 2025-02-08 17:09:53
  * @LastEditors: LetMeFly.xyz
- * @LastEditTime: 2025-02-12 14:18:02
+ * @LastEditTime: 2025-02-12 15:01:55
 -->
 <!DOCTYPE html>
 <html lang="zh-CN">
@@ -175,7 +175,19 @@ J-->|否|C;</code></pre>
         </div>
         <div id="progress-5">
             <h3>步骤5：生成使用决策树前后的结果对比表(<span name="state"></span>)</h3>
-            <div name="option"></div>
+            <div name="option">
+                <button id="progress-5-start">开始分析</button>
+            </div>
+            <details name="log" id="log5">
+                <summary>步骤日志</summary>
+                <pre><code class="inputText">
+请从是否登记结婚、判决依据、彩礼返还比例、诉讼费用分担四个方面对比以上判决
+                </code></pre>
+                <div name="log-content">
+                    <div class="output forbidden" id="output5"></div>
+                    <div class="markdown" id="markdown5"></div>
+                </div>
+            </details>
         </div>
     </div>
     <script name="showLogs">
@@ -189,6 +201,8 @@ J-->|否|C;</code></pre>
         let alreadyEnd3 = true;  // 防止本来就对话结束导致的重复渲染
         let eventSource4;
         let alreadyEnd4 = true;  // 防止本来就对话结束导致的重复渲染
+        let eventSource5;
+        let alreadyEnd5 = true;  // 防止本来就对话结束导致的重复渲染
         function showLog_baseFor2345(eventSource2345, outputSelector, alreadyEnd, step) {
             if (eventSource2345) {
                 eventSource2345.close();
@@ -255,7 +269,7 @@ J-->|否|C;</code></pre>
         }
 
         function showLog5() {
-
+            showLog_baseFor2345(eventSource5, '#progress-5 [name=log] .output', alreadyEnd5, 5);
         }
 
     </script>
@@ -403,6 +417,9 @@ J-->|否|C;</code></pre>
         function need4() {
             start1chat(4);
         }
+
+        const progress_5_start = document.querySelector('#progress-5-start');
+        progress_5_start.onclick = () => {start1chat(5);};
     </script>
 
     <script name="markdownRender">
@@ -454,7 +471,7 @@ J-->|否|C;</code></pre>
         const observer3 = new MutationObserver(onOutputModified3);
         observer3.observe(output3, config);
 
-        // markdown渲染4 - 再堆（待会儿还得一次）
+        // markdown渲染4 - 再堆
         const output4 = document.getElementById('output4');
         const markdown4 = document.getElementById('markdown4');
         function renderMarkdown4() {
@@ -472,6 +489,25 @@ J-->|否|C;</code></pre>
         };
         const observer4 = new MutationObserver(onOutputModified4);
         observer4.observe(output4, config);
+
+        // markdown渲染5 - 最后一堆
+        const output5 = document.getElementById('output5');
+        const markdown5 = document.getElementById('markdown5');
+        function renderMarkdown5() {
+            const inputText = output5.innerHTML;
+            const renderedHtml = marked.parse(inputText);
+            markdown5.innerHTML = renderedHtml;
+        }
+        const onOutputModified5 = function (mutationsList, observer) {
+            for (let mutation of mutationsList) {
+                if (mutation.type === 'childList' || mutation.type === 'characterData') {
+                    // 调用 renderMarkdown 函数
+                    renderMarkdown5();
+                }
+            }
+        };
+        const observer5 = new MutationObserver(onOutputModified5);
+        observer5.observe(output5, config);
 
     </script>
 
