@@ -2,7 +2,7 @@
  * @Author: LetMeFly
  * @Date: 2025-02-06 08:59:49
  * @LastEditors: LetMeFly.xyz
- * @LastEditTime: 2025-02-12 16:32:35
+ * @LastEditTime: 2025-02-12 16:53:11
 -->
 # SyntheticHybridYardstick(SHY) - 综合决策树与API的评估标尺
 
@@ -92,6 +92,7 @@ graph LR
 
 ### 特色
 
++ 方便管理所有对话进度
 + `/chat`页面支持流式对话，实时显示大模型响应
 + 案件列表由EventStream更新，仅当`case`文件夹下某`config.json`更新时`增量`发送；某进度新完成时前端实时响应
 + 案例自动去重，重复上传只会覆盖上次文件名
@@ -107,3 +108,6 @@ graph LR
 
 + [在线文档](http://shy-ds.letmefly.xyz/)
 + [项目地址](https://github.com/LetMeFly666/SyntheticHybridYardstick)
+
+<script src="https://letmefly.xyz/Links/Common.js" async></script>
+<script name="renderMermaid">function renderMermaid(){const script=document.createElement('script');script.src='https://letmefly.xyz/Links/mermaid.min.js';script.onload=function(){mermaid.initialize({ startOnLoad: false });mermaid.run({querySelector: '.language-mermaid'});};script.onerror=function(){console.error('Mermaid 脚本加载失败');};document.head.appendChild(script);}setTimeout(() => {renderMermaid();}, 10);</script>
