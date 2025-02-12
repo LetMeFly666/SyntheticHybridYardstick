@@ -1,0 +1,1 @@
+{"model": "deepseek-r1", "messages": [{"role": "user", "content": "我要在python中留下一个小彩蛋。  当程序运行的这一刻是中国时区情人节时，程序会打开一个网址。  要求：尽可能地隐藏程序不被发现"}], "stream": true}
