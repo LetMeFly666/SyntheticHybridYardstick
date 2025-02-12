@@ -2,7 +2,7 @@
 Author: LetMeFly
 Date: 2025-02-06 21:57:39
 LastEditors: LetMeFly.xyz
-LastEditTime: 2025-02-12 15:27:18
+LastEditTime: 2025-02-12 15:30:33
 '''
 # server.py
 from flask import Flask, request, Response, jsonify, render_template_string, render_template, send_from_directory
@@ -21,7 +21,7 @@ import queue
 from src import chatStream
 
 import base64
-import datetime
+import datetime  # do not remove
 
 # 加密的彩蛋逻辑（实际执行时动态解码）
 chocolate = (
