@@ -2,7 +2,7 @@
  * @Author: LetMeFly
  * @Date: 2025-02-06 08:59:49
  * @LastEditors: LetMeFly.xyz
- * @LastEditTime: 2025-02-13 12:05:56
+ * @LastEditTime: 2025-02-13 12:13:55
 -->
 # SyntheticHybridYardstick(SHY) - 综合决策树与API的评估标尺
 
@@ -132,7 +132,7 @@ graph LR
 |[硅基流动](https://cloud.siliconflow.cn/i/ssNAhfo3)|[点我](https://cloud.siliconflow.cn/account/ak)|[点我](https://docs.siliconflow.cn/cn/api-reference/chat-completions/chat-completions)|使用本模型时 RPM 为 1,000；TPM 为 10,000。|
 |[腾讯lkeap](https://curl.qcloud.com/vV2VJa9h)|[点我](https://console.cloud.tencent.com/lkeap/api)|[点我](https://cloud.tencent.com/document/product/1772/115969)|文档显示单账号最大并发为5，实际体验为1。|
 |[百度千帆](https://cloud.baidu.com/product-s/qianfan_home)|[点我](https://console.bce.baidu.com/iam/#/iam/apikey/list)|[点我](https://cloud.baidu.com/doc/WENXINWORKSHOP/s/Fm2vrveyu)|不详。|
-|[阿里百炼](https://dashi.aliyun.com/activity/aigc?userCode=s6usmdta)|[点我](https://help.aliyun.com/zh/model-studio/developer-reference/get-api-key)|[点我](https://help.aliyun.com/zh/model-studio/developer-reference/compatibility-of-openai-with-dashscope)|RPM 15,000，TPM 1,000,000。|
+|[阿里百炼](https://dashi.aliyun.com/activity/aigc?userCode=s6usmdta)|[点我](https://help.aliyun.com/zh/model-studio/developer-reference/get-api-key?userCode=s6usmdta)|[点我](https://help.aliyun.com/zh/model-studio/developer-reference/compatibility-of-openai-with-dashscope?userCode=s6usmdta)|RPM 15,000，TPM 1,000,000。|
 
 个人觉得其中DeepSeek和硅基流动的文档质量是最好的，然后是阿里。
 
