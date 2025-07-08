@@ -2,7 +2,7 @@
  * @Author: LetMeFly
  * @Date: 2025-02-08 17:09:53
  * @LastEditors: LetMeFly.xyz
- * @LastEditTime: 2025-02-12 16:19:37
+ * @LastEditTime: 2025-07-08 22:34:25
 -->
 <!DOCTYPE html>
 <html lang="zh-CN">
@@ -264,37 +264,39 @@
 graph LR
     classDef startend fill:#F5EBFF,stroke:#BE8FED,stroke-width:2px
     classDef process fill:#E5F6FF,stroke:#73A6FF,stroke-width:2px
-    A([是否登记结婚]):::startend -->|是| B{是否满足离婚条件?}:::process
-    A -->|否| F{是否共同生活?}:::process
-    B -->|否| C([不返还彩礼]):::startend
-    B -->|是| E{是否共同生活?}:::process
-    B -->|是| J{婚前给付是否困难?}:::process
-    F -->|是| G([结合彩礼 实际使用/嫁妆情况/双方过错/当地习俗 决定是否返还彩礼]):::startend
-    F -->|否| H([全部返还彩礼]):::startend
-    E -->|是| I{共同生活时间是否较短}:::process
-    I -->|是| K{彩礼数额是否过高}:::process
-    K -->|是| G
-    I -->|否| C
-    K -->|否| C
-    J -->|是| H
-    J -->|否| C
+    A([是否登记结婚]):::startend -->|是| B{是否满足离婚条件}:::process
+    A -->|否| C{是否共同生活}:::process
+    B -->|是| D{是否共同生活}:::process
+    B -->|是| E{婚前给付是否困难}:::process
+    B -->|否| F([不返还]):::startend
+    C -->|是| G([结合彩礼实际使用/嫁妆情况/共同生活/孕育情况/双方过错/当地习俗 决定是否返还]):::startend
+    C -->|否| H([全部返还]):::startend
+    D -->|是| I{时间是否较短}:::process
+    D -->|否| H
+    E -->|是| H
+    E -->|否| F
+    I -->|是| J{彩礼数额是否过高}:::process
+    I -->|否| F
+    J -->|是| G
+    J -->|否| F
                 </code></pre>
                 <pre><code class="inputText">
 请根据这个决策树进行判决：
-A[是否登记结婚]-->|是|B[是否满足离婚条件?];
-A-->|否|F[是否共同生活?];
-B -->|否|C[不返还彩礼];
-B -->|是|E[是否共同生活?];
-B -->|是 |[婚前给付是否困难?];
-F-->|是|G[结合彩礼实际使用、嫁妆情况、双方过错、当地习俗决定是否返还彩礼];
-F-->|否|H[全部返还彩礼];
-E -->|是|I[共同生活时间是否较短];
-I-->|是|K[彩礼数额是否过高];
-K -->|是|G;
-I-->|否|C;
-K -->|否|C;
-J-->|是|H;
-J-->|否|C;</code></pre>
+A[是否登记结婚]→|是|B[是否满足离婚条件];
+A→|否|C[是否共同生活];
+B→|是|D[是否共同生活];
+B→|是|E[婚前给付是否困难];
+B→|否|F[不返还];
+C→|是|G[结合彩礼实际使用、嫁妆情况、共同生活、孕育情况、双方过错、当地习俗决定是否返还];
+C→|否|H[全部返还];
+D→|是|I[时间是否较短];
+D→|否|H;
+E→|是|H；
+E→|否|F；
+I→|是|J[彩礼数额是否过高];
+I→|否|F；
+J→|是|G；
+J→|否|F；</code></pre>
                 <div name="log-content">
                     <div class="output forbidden" id="output3"></div>
                     <div class="markdown" id="markdown3"></div>
