@@ -2,7 +2,7 @@
 Author: LetMeFly
 Date: 2025-02-06 21:57:39
 LastEditors: LetMeFly.xyz
-LastEditTime: 2025-02-12 15:30:33
+LastEditTime: 2025-07-08 23:31:27
 '''
 # server.py
 from flask import Flask, request, Response, jsonify, render_template_string, render_template, send_from_directory
@@ -13,6 +13,7 @@ import threading
 import time
 from src import chat
 from src import readConfig
+from src import file
 import os
 import hashlib
 from watchdog.observers import Observer
@@ -215,6 +216,11 @@ def chatNoNeed4(caseHash):
 @app.route('/chatIfHad4/<string:caseHash>')
 def chatIfHad4(caseHash):
     return chatStream.chatManager.ifhad4(caseHash)
+
+
+@app.route('/file/img/tree', methods=['GET'])
+def getTreeImg():
+    return Response(file.img_tree(), mimetype='image/svg+xml')
 
 
 def run_flask():

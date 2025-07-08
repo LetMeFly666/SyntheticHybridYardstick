@@ -2,7 +2,7 @@
  * @Author: LetMeFly
  * @Date: 2025-02-08 17:09:53
  * @LastEditors: LetMeFly.xyz
- * @LastEditTime: 2025-07-08 22:34:25
+ * @LastEditTime: 2025-07-08 23:36:43
 -->
 <!DOCTYPE html>
 <html lang="zh-CN">
@@ -260,7 +260,7 @@
             </div>
             <details name="log" id="log3">
                 <summary>步骤日志</summary>
-                <pre><code class="mermaid">
+                <pre style="display: none;"><code class="mermaid">
 graph LR
     classDef startend fill:#F5EBFF,stroke:#BE8FED,stroke-width:2px
     classDef process fill:#E5F6FF,stroke:#73A6FF,stroke-width:2px
@@ -280,6 +280,7 @@ graph LR
     J -->|是| G
     J -->|否| F
                 </code></pre>
+                <center><img src="/file/img/tree" /></center>
                 <pre><code class="inputText">
 请根据这个决策树进行判决：
 A[是否登记结婚]→|是|B[是否满足离婚条件];

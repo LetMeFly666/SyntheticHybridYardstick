@@ -2,7 +2,7 @@
 Author: LetMeFly
 Date: 2025-02-09 10:33:13
 LastEditors: LetMeFly.xyz
-LastEditTime: 2025-02-12 17:17:30
+LastEditTime: 2025-07-08 23:30:32
 '''
 import json
 import platform
@@ -74,4 +74,11 @@ def read_config(filePath: str) -> dict:
         data = f.read()
     ans = json.loads(data)
     return ans
+
+
+"""file(svg) -> txt"""
+def img_tree():
+    with open('static/img/tree/decision-tree.svg', 'r', encoding='utf-8') as f:
+        txt = f.read()
+    return txt
 
