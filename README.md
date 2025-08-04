@@ -4,7 +4,7 @@
  * @LastEditors: LetMeFly.xyz
  * @LastEditTime: 2025-02-13 12:13:55
 -->
-# SyntheticHybridYardstick(SHY) - 综合决策树①与API的评估标尺
+# SyntheticHybridYardstick(SHY) - 综合决策树<sup>①</sup>与API的评估标尺
 
 让DeepSeek(以下可能简称DS)分别不依据和依据决策树判决一个案例并对比判决结果生成表格
 
