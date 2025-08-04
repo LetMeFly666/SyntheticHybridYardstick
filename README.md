@@ -4,7 +4,7 @@
  * @LastEditors: LetMeFly.xyz
  * @LastEditTime: 2025-02-13 12:13:55
 -->
-# SyntheticHybridYardstick(SHY) - 综合决策树与API的评估标尺
+# SyntheticHybridYardstick(SHY) - 综合决策树①与API的评估标尺
 
 让DeepSeek(以下可能简称DS)分别不依据和依据决策树判决一个案例并对比判决结果生成表格
 
@@ -122,6 +122,8 @@ graph LR
 + 设置首页案例进程“progress”接口的队列最大长度，若没有前端消费者则后端队列长度会在config.json变化时不断边长。
 
 ## End
+
+① 此处的决策树并非机器学习中用于分类回归的决策树模型
 
 + [在线文档](http://shy-ds.letmefly.xyz/)
 + [项目地址](https://github.com/LetMeFly666/SyntheticHybridYardstick)
