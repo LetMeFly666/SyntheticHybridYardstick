@@ -123,7 +123,7 @@ graph LR
 
 ## End
 
-① 此处的决策树并非机器学习中用于分类回归的决策树模型
+① 这里的决策树并非指机器学习中的决策树模型，而是人为划分的决策逻辑
 
 + [在线文档](http://shy-ds.letmefly.xyz/)
 + [项目地址](https://github.com/LetMeFly666/SyntheticHybridYardstick)
